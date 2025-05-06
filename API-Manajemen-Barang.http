@@ -1,0 +1,6 @@
+@API_Manajemen_Barang_HostAddress = http://localhost:5196
+
+GET {{API_Manajemen_Barang_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
