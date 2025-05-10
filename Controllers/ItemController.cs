@@ -82,7 +82,7 @@ namespace API_Manajemen_Barang.Controllers
                     Description = i.Description,
                     CategoryId = i.CategoryId,
                     CategoryName = i.Category.Name,
-                }).ToList();
+                }).OrderBy(i => i.ItemId).ToList();
                 return Ok(new { success = true, data = response });
             }
             catch (Exception ex)
