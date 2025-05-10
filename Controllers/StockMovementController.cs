@@ -18,7 +18,7 @@ namespace API_Manajemen_Barang.Controllers
 
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(typeof(StockMovementDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StockMovementCreateDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllStockMovements()
@@ -33,17 +33,17 @@ namespace API_Manajemen_Barang.Controllers
 
         [HttpPost]
         [Authorize]
-        [ProducesResponseType(typeof(StockMovementDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(StockMovementCreateDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult CreateStockMovement([FromBody] StockMovementDto stockMovementDto)
+        public IActionResult CreateStockMovement([FromBody] StockMovementCreateDto stockMovementDto)
         {
             if (stockMovementDto == null)
             {
                 return BadRequest(new { success = false, message = "Data stock movement tidak valid" });
             }
-            var stockMovement = new StockMovement
+            var stockMovement = new Sttoc
             {
                 ItemId = stockMovementDto.ItemId,
                 Quantity = stockMovementDto.Quantity,

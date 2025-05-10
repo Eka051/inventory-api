@@ -32,7 +32,7 @@ namespace API_Manajemen_Barang.Controllers
             {
                 return NotFound(new { success = false, message = "Data barang tidak ditemukan" });
             }
-            var response = items.Select(i => new ItemCreateDto
+            var response = items.Select(i => new ItemResponseDto
             {
                 ItemId = i.ItemId,
                 Name = i.Name,

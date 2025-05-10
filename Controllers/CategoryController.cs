@@ -23,18 +23,24 @@ namespace API_Manajemen_Barang.Controllers
         public IActionResult GetAllCategories()
         {
             var categories = _context.Categories.ToList();
-            if (categories == null || !categories.Any())
+            var response = categories.Select(c => new CategoryResponseDto
+            {
+                CategoryId = c.CategoryId,
+                Name = c.Name,
+                Description = c.Description
+            }).ToList();
+            if (response == null || !response.Any())
             {
                 return NotFound(new { success = false, message = "Data kategori tidak ditemukan" });
             }
-            return Ok(new { success = true, data = categories });
+            return Ok(new { success = true, data = response});
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CategoryCreateDto), StatusCodes.Status201Created)]
 
-        public IActionResult CreateCategory([FromBody] CategoryDto categoryDto)
+        public IActionResult CreateCategory([FromBody] CategoryCreateDto categoryDto)
         {
             if (categoryDto == null)
             {
@@ -59,14 +65,14 @@ namespace API_Manajemen_Barang.Controllers
             };
             _context.Categories.Add(category);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetAllCategories), new { id = categoryDto.CategoryId }, new { success = true, data = response });
+            return CreatedAtAction(nameof(GetAllCategories), new { success = true, data = response });
         }
 
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
-        public IActionResult UpdateCategory([FromBody] CategoryDto categoryDto)
+        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
+        public IActionResult UpdateCategory([FromBody] CategoryResponseDto categoryDto)
         {
             if (categoryDto == null)
             {
@@ -86,8 +92,8 @@ namespace API_Manajemen_Barang.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
-        public IActionResult DeleteCategory([FromBody] CategoryDto categoryDto)
+        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
+        public IActionResult DeleteCategory([FromBody] CategoryResponseDto categoryDto)
         {
             if (categoryDto == null)
             {
