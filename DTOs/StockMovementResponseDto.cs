@@ -8,6 +8,5 @@
         public string MovementType { get; set; } // "in" or "out"
         public string Note { get; set; }
         public DateTime CreatedAt { get; set; }
-        public ItemDto Item { get; set; } // Include item details
     }
 }

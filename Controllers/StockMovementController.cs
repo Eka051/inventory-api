@@ -28,7 +28,17 @@ namespace API_Manajemen_Barang.Controllers
             {
                 return NotFound(new { success = false, message = "Data pergerakan stok tidak ditemukan" });
             }
-            return Ok(new { success = true, message = stockMovements });
+            var response = stockMovements.Select(sm => new StockMovementResponseDto
+            {
+                StockMovementId = sm.StockMovementId,
+                ItemId = sm.ItemId,
+                MovementType = sm.Type,
+                Quantity = sm.Quantity,
+                Note = sm.Note,
+                CreatedAt = sm.CreatedAt
+            }).ToList();
+
+            return Ok(new { success = true, message = response });
         }
 
         [HttpPost]
