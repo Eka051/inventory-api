@@ -4,6 +4,7 @@ using API_Manajemen_Barang.Helpers;
 using API_Manajemen_Barang.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API_Manajemen_Barang.Controllers
 {
@@ -20,18 +21,24 @@ namespace API_Manajemen_Barang.Controllers
         [HttpGet]
         [Route("staff")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(User), StatusCodes.Status404NotFound)]
-
+        [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllStaff()
         {
             try
             {
-                var users = _context.Users.Where(u => u.Role.RoleName.ToLower() != "admin");
-                if (users == null || !users.Any())
+                var staffList = _context.Users.Include(u => u.Role).Where(u => u.Role.RoleName.ToLower() == "staff").Select(u => new UserResponseDto
+                {
+                    UserId = u.UserId,
+                    Name = u.Name,
+                    Email = u.Email,
+                    RoleName = u.Role.RoleName.ToLower(),
+                }).ToList();
+                if (staffList == null || !staffList.Any())
                 {
                     return NotFound(new { success = false, message = "Data staff tidak ditemukan" });
                 }
-                return Ok(new { success = true, data = users });
+                return Ok(new { success = true, data = staffList });
             }
             catch (Exception ex)
             {
@@ -42,10 +49,10 @@ namespace API_Manajemen_Barang.Controllers
         [HttpPost]
         [Route("staff")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(typeof(User), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(User), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(User), StatusCodes.Status500InternalServerError)]
-        public IActionResult CreateStaff([FromBody] UserDto dto)
+        [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult CreateStaff([FromBody] UserCreateDto userDto)
         {
             try
             {
@@ -55,21 +62,76 @@ namespace API_Manajemen_Barang.Controllers
                     return NotFound(new { success = false, message = "Role staff tidak ditemukan. Silahkan tambah terlebih dahulu" });
                 }
 
-                var hashedPassword = PasswordHasherHelper.Hash(dto.PasswordHash);
+                var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email.ToLower());
+                if (existingUser != null)
+                {
+                    return Conflict(new { success = false, message = "Email sudah terdaftar" });
+                }
+
+                var hashedPassword = PasswordHasherHelper.Hash(userDto.Password);
 
                 var user = new User
                 {
-                    Name = dto.Name,
-                    Email = dto.Email,
+                    Name = userDto.Name,
+                    Email = userDto.Email,
                     PasswordHash = hashedPassword,
-                    RoleId = 2,
-                    
-                };
+                    RoleId = role.RoleId
 
+                };
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
-                return CreatedAtAction(nameof(GetAllStaff), new { id = user.UserId }, new { success = true, data = user });
+                var response = new UserResponseDto
+                {
+                    UserId = user.UserId,
+                    Name = user.Name,
+                    Email = user.Email,
+                    RoleName = role.RoleName.ToLower(),
+                };
+                return CreatedAtAction(nameof(GetAllStaff),new { success = true, data = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("staff/{id}")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult UpdateStaff(int id, [FromBody] UserCreateDto userDto)
+        {
+            try
+            {
+                var user = _context.Users.FirstOrDefault(u => u.UserId == id);
+                if (user == null)
+                {
+                    return NotFound(new { success = false, message = "Staff tidak ditemukan" });
+                }
+                var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email.ToLower() && u.UserId != id);
+                if (existingUser != null)
+                {
+                    return Conflict(new { success = false, message = "Email sudah terdaftar" });
+                }
+                user.Name = userDto.Name;
+                user.Email = userDto.Email;
+                if (!string.IsNullOrEmpty(userDto.Password))
+                {
+                    user.PasswordHash = PasswordHasherHelper.Hash(userDto.Password);
+                }
+                _context.Users.Update(user);
+                _context.SaveChanges();
+                var response = new UserResponseDto
+                {
+                    UserId = user.UserId,
+                    Name = user.Name,
+                    Email = user.Email,
+                    RoleName = user.Role.RoleName.ToLower(),
+                };
+                return Ok(new { success = true, data = response });
             }
             catch (Exception ex)
             {
@@ -80,6 +142,8 @@ namespace API_Manajemen_Barang.Controllers
         [HttpDelete]
         [Route("staff/{id}")]
         [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteStaff(int id)
         {
             try
@@ -91,7 +155,7 @@ namespace API_Manajemen_Barang.Controllers
                 }
                 _context.Users.Remove(user);
                 _context.SaveChanges();
-                return Ok(new { success = true, message = "Staff berhasil dihapus" });
+                return Ok(new { success = true, message = $"Staff dengan userId {id} berhasil dihapus" });
             }
             catch (Exception ex)
             {
