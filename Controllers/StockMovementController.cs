@@ -26,9 +26,9 @@ namespace API_Manajemen_Barang.Controllers
             var stockMovements = _context.StockMovements.ToList();
             if (stockMovements == null || !stockMovements.Any())
             {
-                return NotFound(new { success = false, message = "Data stock movement tidak ditemukan" });
+                return NotFound(new { success = false, message = "Data pergerakan stok tidak ditemukan" });
             }
-            return Ok(new { success = true, message = "Get all stock movements" });
+            return Ok(new { success = true, message = stockMovements });
         }
 
         [HttpPost]
@@ -41,18 +41,54 @@ namespace API_Manajemen_Barang.Controllers
         {
             if (stockMovementDto == null)
             {
-                return BadRequest(new { success = false, message = "Data stock movement tidak valid" });
+                return BadRequest(new { success = false, message = "Data pergerakan stok tidak valid" });
             }
-            var stockMovement = new Sttoc
+
+            var item = _context.Items.FirstOrDefault(i => i.ItemId == stockMovementDto.ItemId);
+            if (item == null)
+            {
+                return NotFound(new { success = false, message = "Item tidak ditemukan" });
+            }
+
+            if (stockMovementDto.MovementType == "in")
+            {
+                item.Stock += stockMovementDto.Quantity;
+            }
+            else if (stockMovementDto.MovementType == "out")
+            {
+                if (item.Stock < stockMovementDto.Quantity)
+                {
+                    return BadRequest(new { success = false, message = "Stok tidak mencukupi" });
+                }
+                item.Stock -= stockMovementDto.Quantity;
+            }
+            else
+            {
+                return BadRequest(new { success = false, message = "Tipe pergerakan stok tidak valid" });
+            }
+
+            var stockMovement = new StockMovement
             {
                 ItemId = stockMovementDto.ItemId,
-                Quantity = stockMovementDto.Quantity,
                 Type = stockMovementDto.MovementType,
+                Quantity = stockMovementDto.Quantity,
+                Note = stockMovementDto.Note,
                 CreatedAt = DateTime.UtcNow
             };
+
+            var response = new StockMovementResponseDto
+            {
+                ItemId = stockMovement.ItemId,
+                MovementType = stockMovement.Type,
+                Quantity = stockMovement.Quantity,
+                Note = stockMovement.Note,
+                CreatedAt = stockMovement.CreatedAt
+            };
+
             _context.StockMovements.Add(stockMovement);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetAllStockMovements), new { id = stockMovement.StockMovementId }, new { success = true, message = "Stock movement created successfully" });
+
+            return CreatedAtAction(nameof(GetAllStockMovements), new { success = true, message = "Pembuatan pergerakan stok berhasil." });
         }
     }
 }
