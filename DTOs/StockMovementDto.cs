@@ -9,15 +9,5 @@
         public DateTime MovementDate { get; set; }
         public string MovementType { get; set; } // "in" or "out"
         public string Description { get; set; }
-        public StockMovementDto(int stockMovementId, int productId, string productName, int quantity, DateTime movementDate, string movementType, string description)
-        {
-            StockMovementId = stockMovementId;
-            ProductId = productId;
-            ProductName = productName;
-            Quantity = quantity;
-            MovementDate = movementDate;
-            MovementType = movementType;
-            Description = description;
-        }
     }
 }

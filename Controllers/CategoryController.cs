@@ -6,16 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Manajemen_Barang.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/categories")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IConfiguration _configuration;
-        public CategoryController(AppDbContext context, IConfiguration configuration)
+        public CategoryController(AppDbContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         [HttpGet]

@@ -1,4 +1,5 @@
-﻿using API_Manajemen_Barang.Models;
+﻿using API_Manajemen_Barang.DTOs;
+using API_Manajemen_Barang.Models;
 using BCrypt.Net;
 
 namespace API_Manajemen_Barang.Data

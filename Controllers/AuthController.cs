@@ -2,13 +2,14 @@
 using API_Manajemen_Barang.DTOs;
 using API_Manajemen_Barang.Helpers;
 using API_Manajemen_Barang.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_Manajemen_Barang.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
