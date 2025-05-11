@@ -94,6 +94,7 @@ namespace API_Manajemen_Barang.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(ItemResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateItem([FromBody] ItemCreateDto itemDto)
@@ -106,18 +107,27 @@ namespace API_Manajemen_Barang.Controllers
                     return NotFound(new { success = false, message = $"Kategori dengan id {itemDto.CategoryId} tidak ditemukan" });
                 }
 
+                if (itemDto.Stock <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Stok tidak boleh kurang dari atau sama dengan 0" });
+                } else if (itemDto == null)
+                {
+                    return BadRequest(new { success = false, message = "Data barang tidak valid" });
+                } else
+                {
+                    var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Name.ToLower() == itemDto.Name.ToLower());
+                    if (existingItem != null)
+                    {
+                        return Conflict(new { success = false, message = "Barang sudah ada. Tambahkan barang lain" });
+                    }
+                }
+
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState.Values.SelectMany(v => v.Errors)
                                                   .Select(e => e.ErrorMessage)
                                                   .ToList();
                     return BadRequest(new { success = false, message = "Data barang tidak valid", errors });
-                }
-
-                var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Name.ToLower() == itemDto.Name.ToLower());
-                if (existingItem != null)
-                {
-                    return Conflict(new { success = false, message = "Barang sudah ada. Tambahkan barang lain" });
                 }
 
                 var item = new Item
@@ -136,6 +146,7 @@ namespace API_Manajemen_Barang.Controllers
                 {
                     var response = new ItemResponseDto
                     {
+                        ItemId = createdItem.ItemId,
                         Name = createdItem.Name,
                         Stock = createdItem.Stock,
                         Description = createdItem.Description,
@@ -178,10 +189,18 @@ namespace API_Manajemen_Barang.Controllers
                                                   .ToList();
                     return BadRequest(new { success = false, message = "Data barang tidak valid", errors });
                 }
+
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == itemDto.CategoryId);
+                if (category == null)
+                {
+                    return NotFound(new { success = false, message = $"Kategori dengan id {itemDto.CategoryId} tidak ditemukan" });
+                }
+
                 item.Name = itemDto.Name;
                 item.Stock = itemDto.Stock;
                 item.Description = itemDto.Description;
                 item.CategoryId = itemDto.CategoryId;
+
                 _context.Items.Update(item);
                 await _context.SaveChangesAsync();
 
@@ -192,9 +211,9 @@ namespace API_Manajemen_Barang.Controllers
                     Stock = item.Stock,
                     Description = item.Description,
                     CategoryId = item.CategoryId,
-                    CategoryName = item.Category.Name
+                    CategoryName = category.Name
                 };
-                return Ok(new { success = true, message = "Berhasil menambahkan item", data = response });
+                return Ok(new { success = true, message = "Berhasil memperbarui item", data = response });
             }
             catch (Exception ex)
             {
