@@ -54,51 +54,61 @@ namespace API_Manajemen_Barang.Controllers
                 return BadRequest(new { success = false, message = "Data pergerakan stok tidak valid" });
             }
 
-            var item = _context.Items.FirstOrDefault(i => i.ItemId == stockMovementDto.ItemId);
-            if (item == null)
+            try
             {
-                return NotFound(new { success = false, message = "Item tidak ditemukan" });
-            }
-
-            if (stockMovementDto.MovementType == "in")
-            {
-                item.Stock += stockMovementDto.Quantity;
-            }
-            else if (stockMovementDto.MovementType == "out")
-            {
-                if (item.Stock < stockMovementDto.Quantity)
+                var item = _context.Items.FirstOrDefault(i => i.ItemId == stockMovementDto.ItemId);
+                if (item == null)
                 {
-                    return BadRequest(new { success = false, message = "Stok tidak mencukupi" });
+                    return NotFound(new { success = false, message = "Item tidak ditemukan" });
                 }
-                item.Stock -= stockMovementDto.Quantity;
+
+                if (stockMovementDto.Quantity <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Jumlah pergerakan stok tidak valid" });
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                                  .Select(e => e.ErrorMessage)
+                                                  .ToList();
+                    return BadRequest(new { success = false, message = "Data pergerakan stok tidak valid", errors });
+                }
+
+                switch (stockMovementDto.MovementType)
+                {
+                    case "in":
+                        item.Stock += stockMovementDto.Quantity;
+                        break;
+                    case "out":
+                        if (item.Stock < stockMovementDto.Quantity)
+                        {
+                            return BadRequest(new { success = false, message = "Stok tidak mencukupi" });
+                        }
+                        item.Stock -= stockMovementDto.Quantity;
+                        break;
+                    default:
+                        return BadRequest(new { success = false, message = "Tipe pergerakan stok tidak valid" });
+                }
+
+                var stockMovement = new StockMovement
+                {
+                    ItemId = stockMovementDto.ItemId,
+                    Type = stockMovementDto.MovementType,
+                    Quantity = stockMovementDto.Quantity,
+                    Note = stockMovementDto.Note,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.StockMovements.Add(stockMovement);
+                _context.SaveChanges();
+
+                return CreatedAtAction(nameof(GetAllStockMovements), new { success = true, message = "Pembuatan pergerakan stok berhasil." });
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(new { success = false, message = "Tipe pergerakan stok tidak valid" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Terjadi kesalahan pada server", error = ex.Message });
             }
-
-            var stockMovement = new StockMovement
-            {
-                ItemId = stockMovementDto.ItemId,
-                Type = stockMovementDto.MovementType,
-                Quantity = stockMovementDto.Quantity,
-                Note = stockMovementDto.Note,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            var response = new StockMovementResponseDto
-            {
-                ItemId = stockMovement.ItemId,
-                MovementType = stockMovement.Type,
-                Quantity = stockMovement.Quantity,
-                Note = stockMovement.Note,
-                CreatedAt = stockMovement.CreatedAt
-            };
-
-            _context.StockMovements.Add(stockMovement);
-            _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetAllStockMovements), new { success = true, message = "Pembuatan pergerakan stok berhasil." });
         }
     }
 }

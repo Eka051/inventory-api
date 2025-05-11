@@ -106,6 +106,14 @@ namespace API_Manajemen_Barang.Controllers
                     return NotFound(new { success = false, message = $"Kategori dengan id {itemDto.CategoryId} tidak ditemukan" });
                 }
 
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                                  .Select(e => e.ErrorMessage)
+                                                  .ToList();
+                    return BadRequest(new { success = false, message = "Data barang tidak valid", errors });
+                }
+
                 var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Name.ToLower() == itemDto.Name.ToLower());
                 if (existingItem != null)
                 {
@@ -162,6 +170,14 @@ namespace API_Manajemen_Barang.Controllers
                 {
                     return NotFound(new { success = false, message = "Barang tidak ditemukan" });
                 }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                                  .Select(e => e.ErrorMessage)
+                                                  .ToList();
+                    return BadRequest(new { success = false, message = "Data barang tidak valid", errors });
+                }
                 item.Name = itemDto.Name;
                 item.Stock = itemDto.Stock;
                 item.Description = itemDto.Description;
@@ -178,7 +194,7 @@ namespace API_Manajemen_Barang.Controllers
                     CategoryId = item.CategoryId,
                     CategoryName = item.Category.Name
                 };
-                return Ok(new { success = true, data = response });
+                return Ok(new { success = true, message = "Berhasil menambahkan item", data = response });
             }
             catch (Exception ex)
             {

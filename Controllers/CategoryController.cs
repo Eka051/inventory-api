@@ -20,6 +20,9 @@ namespace API_Manajemen_Barang.Controllers
 
         [HttpGet]
         [Authorize]
+        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllCategories()
         {
             var categories = _context.Categories.ToList();
@@ -39,67 +42,104 @@ namespace API_Manajemen_Barang.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(CategoryCreateDto), StatusCodes.Status201Created)]
-
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult CreateCategory([FromBody] CategoryCreateDto categoryDto)
         {
-            if (categoryDto == null)
+            try
             {
-                return BadRequest(new { success = false, message = "Data kategori tidak valid" });
-            }
-            var existingCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
-            if (existingCategory != null)
-            {
-                return Conflict(new { success = false, message = "Kategori sudah ada. Tambahkan kategori lain" });
-            }
+                if (categoryDto == null)
+                {
+                    return BadRequest(new { success = false, message = "Data kategori tidak valid" });
+                }
 
-            var category = new Category
-            {
-                Name = categoryDto.Name,
-                Description = categoryDto.Description
-            };
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                                  .Select(e => e.ErrorMessage)
+                                                  .ToList();
+                    return BadRequest(new { success = false, message = "Data kategori tidak valid", errors });
+                }
 
-            var response = new
+                var existingCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
+                if (existingCategory != null)
+                {
+                    return Conflict(new { success = false, message = "Kategori sudah ada. Tambahkan kategori lain" });
+                }
+
+                var category = new Category
+                {
+                    Name = categoryDto.Name,
+                    Description = categoryDto.Description
+                };
+
+                var response = new
+                {
+                    category.Name,
+                    category.Description
+                };
+                _context.Categories.Add(category);
+                _context.SaveChanges();
+                return CreatedAtAction(nameof(GetAllCategories), new { success = true, message = "Kategori berhasil ditambahkan", data = response });
+            }
+            catch (Exception ex)
             {
-                category.Name,
-                category.Description
-            };
-            _context.Categories.Add(category);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetAllCategories), new { success = true, data = response });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Terjadi kesalahan pada server", error = ex.Message });
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
-        public IActionResult UpdateCategory([FromBody] CategoryResponseDto categoryDto)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult UpdateCategory(int id, [FromBody] CategoryCreateDto categoryDto)
         {
             if (categoryDto == null)
             {
                 return BadRequest(new { success = false, message = "Data kategori tidak valid" });
             }
-            var existingCategory = _context.Categories.Find(categoryDto.CategoryId);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return BadRequest(new { success = false, message = "Data kategori tidak valid", errors });
+            }
+            var existingCategory = _context.Categories.Find(id);
             if (existingCategory == null)
             {
                 return NotFound(new { success = false, message = "Kategori tidak ditemukan" });
             }
             existingCategory.Name = categoryDto.Name;
             existingCategory.Description = categoryDto.Description;
+            var response = new CategoryResponseDto
+            {
+                CategoryId = existingCategory.CategoryId,
+                Name = existingCategory.Name,
+                Description = existingCategory.Description
+            };
             _context.SaveChanges();
-            return Ok(new { success = true, message = "Kategori berhasil diperbarui" });
+            return Ok(new { success = true, message = "Kategori berhasil diperbarui", data = response });
         }
 
         [HttpDelete]
         [Route("{id}")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
-        public IActionResult DeleteCategory([FromBody] CategoryResponseDto categoryDto)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteCategory(int id)
         {
-            if (categoryDto == null)
+            if (id <= 0)
             {
-                return BadRequest(new { success = false, message = "Data kategori tidak valid" });
+                return BadRequest(new { success = false, message = "ID kategori tidak valid" });
             }
-            var existingCategory = _context.Categories.Find(categoryDto.CategoryId);
+            var existingCategory = _context.Categories.Find(id);
             if (existingCategory == null)
             {
                 return NotFound(new { success = false, message = "Kategori tidak ditemukan" });

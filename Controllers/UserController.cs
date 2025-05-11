@@ -22,7 +22,9 @@ namespace API_Manajemen_Barang.Controllers
         [Route("staff")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetAllStaff()
         {
             try
@@ -50,7 +52,10 @@ namespace API_Manajemen_Barang.Controllers
         [Route("staff")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult CreateStaff([FromBody] UserCreateDto userDto)
         {
@@ -66,6 +71,16 @@ namespace API_Manajemen_Barang.Controllers
                 if (existingUser != null)
                 {
                     return Conflict(new { success = false, message = "Email sudah terdaftar" });
+                } else if (userDto == null)
+                {
+                    return BadRequest(new { success = false, message = "Data staff tidak valid" });
+                }
+                else if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                                  .Select(e => e.ErrorMessage)
+                                                  .ToList();
+                    return BadRequest(new { success = false, message = "Data staff tidak valid", errors });
                 }
 
                 var hashedPassword = PasswordHasherHelper.Hash(userDto.Password);
@@ -100,7 +115,9 @@ namespace API_Manajemen_Barang.Controllers
         [Route("staff/{id}")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult UpdateStaff(int id, [FromBody] UserCreateDto userDto)
         {
@@ -144,6 +161,7 @@ namespace API_Manajemen_Barang.Controllers
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult DeleteStaff(int id)
         {
             try
