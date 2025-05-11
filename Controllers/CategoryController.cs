@@ -66,7 +66,7 @@ namespace API_Manajemen_Barang.Controllers
                 var existingCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
                 if (existingCategory != null)
                 {
-                    return Conflict(new { success = false, message = "Kategori sudah ada. Tambahkan kategori lain" });
+                    return Conflict(new { success = false, message = $"Kategori {existingCategory.Name} sudah ada. Tambahkan kategori lain" });
                 }
 
                 var category = new Category
@@ -115,6 +115,14 @@ namespace API_Manajemen_Barang.Controllers
             {
                 return NotFound(new { success = false, message = "Kategori tidak ditemukan" });
             }
+            else if (categoryDto.Name.ToLower() != existingCategory.Name.ToLower())
+            {
+                var duplicateCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
+                if (duplicateCategory != null)
+                {
+                    return Conflict(new { success = false, message = $"Kategori {duplicateCategory.Name} sudah ada. Tambahkan kategori lain" });
+                }
+            }
             existingCategory.Name = categoryDto.Name;
             existingCategory.Description = categoryDto.Description;
             var response = new CategoryResponseDto
@@ -142,11 +150,11 @@ namespace API_Manajemen_Barang.Controllers
             var existingCategory = _context.Categories.Find(id);
             if (existingCategory == null)
             {
-                return NotFound(new { success = false, message = "Kategori tidak ditemukan" });
+                return NotFound(new { success = false, message = $"Kategori dengan id {id} tidak ditemukan" });
             }
             _context.Categories.Remove(existingCategory);
             _context.SaveChanges();
-            return Ok(new { success = true, message = "Kategori berhasil dihapus" });
+            return Ok(new { success = true, message = $"Kategori {existingCategory.Name} dengan id {id} berhasil dihapus" });
         }
     }
 }

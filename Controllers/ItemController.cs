@@ -239,7 +239,7 @@ namespace API_Manajemen_Barang.Controllers
                 }
                 _context.Items.Remove(item);
                 await _context.SaveChangesAsync();
-                return Ok(new { success = true, message = "Barang berhasil dihapus" });
+                return Ok(new { success = true, message = $"Barang {item.Name} dengan id {id} berhasil dihapus" });
             }
             catch (Exception ex)
             {

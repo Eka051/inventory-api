@@ -123,24 +123,34 @@ namespace API_Manajemen_Barang.Controllers
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(u => u.UserId == id);
+                var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.UserId == id);
                 if (user == null)
                 {
                     return NotFound(new { success = false, message = "Staff tidak ditemukan" });
                 }
+
+                if (user.Role == null)
+                {
+                    return StatusCode(500, new { success = false, message = "Role data is missing for the user." });
+                }
+
                 var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email.ToLower() && u.UserId != id);
                 if (existingUser != null)
                 {
                     return Conflict(new { success = false, message = "Email sudah terdaftar" });
                 }
+
                 user.Name = userDto.Name;
                 user.Email = userDto.Email;
+                user.RoleId = user.Role.RoleId;
                 if (!string.IsNullOrEmpty(userDto.Password))
                 {
                     user.PasswordHash = PasswordHasherHelper.Hash(userDto.Password);
                 }
+
                 _context.Users.Update(user);
                 _context.SaveChanges();
+
                 var response = new UserResponseDto
                 {
                     UserId = user.UserId,
@@ -148,7 +158,12 @@ namespace API_Manajemen_Barang.Controllers
                     Email = user.Email,
                     RoleName = user.Role.RoleName.ToLower(),
                 };
+
                 return Ok(new { success = true, data = response });
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(500, new { success = false, message = "A null reference error occurred.", details = ex.Message });
             }
             catch (Exception ex)
             {
@@ -173,7 +188,7 @@ namespace API_Manajemen_Barang.Controllers
                 }
                 _context.Users.Remove(user);
                 _context.SaveChanges();
-                return Ok(new { success = true, message = $"Staff dengan userId {id} berhasil dihapus" });
+                return Ok(new { success = true, message = $"Staff {user.Name} dengan userId {id} berhasil dihapus" });
             }
             catch (Exception ex)
             {
