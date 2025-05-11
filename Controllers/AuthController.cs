@@ -1,8 +1,6 @@
 ﻿using API_Manajemen_Barang.Data;
 using API_Manajemen_Barang.DTOs;
 using API_Manajemen_Barang.Helpers;
-using API_Manajemen_Barang.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
