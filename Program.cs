@@ -7,11 +7,12 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Debug environment variables
 foreach (var env in Environment.GetEnvironmentVariables().Keys)
 {
     Console.WriteLine($"Environment Variable: {env}");
 }
-
 foreach (var config in builder.Configuration.AsEnumerable())
 {
     Console.WriteLine($"Config: {config.Key} = {config.Value}");
@@ -28,13 +29,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Logging.AddConsole();
 
 // --- JWT ---
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? Environment.GetEnvironmentVariable("Jwt__Key")
+    ?? throw new InvalidOperationException("JWT Key not found.");
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
@@ -47,7 +52,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Inventory API", Version = "v1" });
-
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -57,7 +61,6 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
-
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -70,34 +73,33 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-if (args.Contains("seed"))
+var app = builder.Build();
+bool shouldSeed = args.Contains("seed") ||
+                 string.Equals(Environment.GetEnvironmentVariable("SEED_DATABASE"), "true", StringComparison.OrdinalIgnoreCase);
+
+if (shouldSeed)
 {
     Console.WriteLine("⚙️ Running database migration + seeder...");
-    var app = builder.Build();
-
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.EnsureCreated();
         db.Database.Migrate();
         DbSeeder.Seed(db);
     }
-
     Console.WriteLine("✅ Seeding selesai.");
-    return;
 }
 
-var appNormal = builder.Build();
-
-if (appNormal.Environment.IsDevelopment() || true)
+if (app.Environment.IsDevelopment() || true)
 {
-    appNormal.UseSwagger();
-    appNormal.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-appNormal.UseHttpsRedirection();
-appNormal.UseRouting();
-appNormal.UseAuthentication();
-appNormal.UseMiddleware<ErrorHandlingMiddleware>();
-appNormal.UseAuthorization();
-appNormal.MapControllers();
-appNormal.Run();
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
