@@ -5,7 +5,7 @@ name: Build, Migrate, and Deploy ASP.Net Core app to Azure Web App - inventory-a
 on:
   push:
     branches:
-      - master # <- SESUAIKAN: Ganti 'master' jika branch utama Anda bernama 'main' atau yang lain
+      - master 
   workflow_dispatch:
 
 env:
@@ -49,7 +49,7 @@ jobs:
       - name: Run database migrations
         run: |
           Write-Host "Running EF Core database migrations..."
-          dotnet ef database update --connection-string "${{ secrets.DB_CONNECTION_STRING_MIGRATION }}" --startup-project ${{ env.STARTUP_PROJECT_PATH }}${{ env.CSPROJ_FILE_NAME }} --verbose
+          dotnet ef database update "${{ secrets.DB_CONNECTION_STRING_MIGRATION }}" --startup-project ${{ env.STARTUP_PROJECT_PATH }}${{ env.CSPROJ_FILE_NAME }} --verbose
           Write-Host "Database migration completed."
         env:
           DB_CONNECTION_STRING_MIGRATION: ${{ secrets.DB_CONNECTION_STRING_MIGRATION }}
@@ -61,7 +61,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          # MODIFIKASI: Gunakan variabel PUBLISH_DIR yang sudah didefinisikan
           path: ${{ env.PUBLISH_DIR }}
 
   deploy:
