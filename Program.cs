@@ -13,25 +13,33 @@ foreach (var env in Environment.GetEnvironmentVariables().Keys)
 {
     Console.WriteLine($"Environment Variable: {env}");
 }
-foreach (var config in builder.Configuration.AsEnumerable())
-{
-    Console.WriteLine($"Config: {config.Key} = {config.Value}");
-}
 
 // --- Load Connection String ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? Environment.GetEnvironmentVariable("DefaultConnection")
     ?? throw new InvalidOperationException("❌ Connection string 'DefaultConnection' not found.");
-Console.WriteLine($"📡 Connection string: {connectionString}");
+Console.WriteLine($"📡 Connection string found (length: {connectionString.Length})");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Logging.AddConsole();
 
 // --- JWT ---
-var jwtKey = builder.Configuration["Jwt:Key"]
-    ?? Environment.GetEnvironmentVariable("Jwt__Key")
-    ?? throw new InvalidOperationException("JWT Key not found.");
+Console.WriteLine("Mencari JWT Key...");
+var jwtKeyFromConfig = builder.Configuration["Jwt:Key"];
+var jwtKeyFromEnv = Environment.GetEnvironmentVariable("Jwt__Key");
+Console.WriteLine($"JWT Key from config: {(string.IsNullOrEmpty(jwtKeyFromConfig) ? "not found" : "found")}");
+Console.WriteLine($"JWT Key from env: {(string.IsNullOrEmpty(jwtKeyFromEnv) ? "not found" : "found")}");
+
+var jwtKey = jwtKeyFromConfig ?? jwtKeyFromEnv ?? builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtKey))
+{
+    Console.WriteLine("JWT NOT FOUND");
+}
+else
+{
+    Console.WriteLine($"✅ JWT Key ditemukan (panjang: {jwtKey.Length})");
+}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -39,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!)),
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
@@ -74,20 +82,39 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 var app = builder.Build();
-bool shouldSeed = args.Contains("seed") ||
-                 string.Equals(Environment.GetEnvironmentVariable("SEED_DATABASE"), "true", StringComparison.OrdinalIgnoreCase);
 
-if (shouldSeed)
+try
 {
-    Console.WriteLine("⚙️ Running database migration + seeder...");
     using (var scope = app.Services.CreateScope())
     {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.EnsureCreated();
-        db.Database.Migrate();
-        DbSeeder.Seed(db);
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        if (dbContext.Database.GetPendingMigrations().Any())
+        {
+            Console.WriteLine("⚙️ Menjalankan database migration...");
+            dbContext.Database.Migrate();
+            Console.WriteLine("✅ Migrasi database selesai");
+        }
+        else
+        {
+            Console.WriteLine("✅ Database sudah up-to-date, tidak perlu migrasi");
+        }
+
+        if (!dbContext.Categories.Any())
+        {
+            Console.WriteLine("⚙ Database kosong, menjalankan seeder...");
+            DbSeeder.Seed(dbContext);
+            Console.WriteLine("✅ Seeding selesai");
+        }
+        else
+        {
+            Console.WriteLine("Database sudah berisi data, tidak perlu seeding");
+        }
     }
-    Console.WriteLine("✅ Seeding selesai.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error saat migrasi/seeding database: {ex.Message}");
 }
 
 if (app.Environment.IsDevelopment() || true)
