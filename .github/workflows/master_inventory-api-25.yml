@@ -48,9 +48,8 @@ jobs:
 
       - name: Run database migrations
         run: |
-          Write-Host "Running EF Core database migrations..."
-          dotnet ef database update "${{ secrets.DB_CONNECTION_STRING_MIGRATION }}" --startup-project ${{ env.STARTUP_PROJECT_PATH }}${{ env.CSPROJ_FILE_NAME }} --verbose
-          Write-Host "Database migration completed."
+          dotnet ef database update --connection "${{ secrets.DB_CONNECTION_STRING_MIGRATION }}" --startup-project ${{ env.STARTUP_PROJECT_PATH }}${{ env.CSPROJ_FILE_NAME }} --verbose
+
         env:
           DB_CONNECTION_STRING_MIGRATION: ${{ secrets.DB_CONNECTION_STRING_MIGRATION }}
 
