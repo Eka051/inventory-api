@@ -5,19 +5,19 @@ name: Build, Migrate, and Deploy ASP.Net Core app to Azure Web App - inventory-a
 on:
   push:
     branches:
-      - master
+      - master # <- SESUAIKAN: Ganti 'master' jika branch utama Anda bernama 'main' atau yang lain
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: inventory-api-25 
-  DOTNET_VERSION: '9.x'
+  AZURE_WEBAPP_NAME: inventory-api-25
+  DOTNET_VERSION: '9.x' 
   STARTUP_PROJECT_PATH: ''
-  CSPROJ_FILE_NAME: 'API-Manajemen-Barang.csproj'
-  PUBLISH_OUTPUT_PATH: '${{env.DOTNET_ROOT}}/myapp'
+  CSPROJ_FILE_NAME: 'API-Manajemen-Barang.csproj' 
+  PUBLISH_DIR: 'publish_output'
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest 
     permissions:
       contents: read
 
@@ -37,8 +37,9 @@ jobs:
 
       # --- Migrasi Database ---
       - name: Install dotnet ef tool
-        run: dotnet tool install --global dotnet-ef
+        run: dotnet tool install --global dotnet-ef --version 8.0.0 # <- SESUAIKAN: Versi EF Core Anda
 
+      # Menambahkan lokasi instalasi global tools ke variabel lingkungan PATH untuk runner Windows
       - name: Add dotnet ef to PATH
         run: |
           $DOTNET_TOOLS_PATH = "$env:USERPROFILE\.dotnet\tools"
@@ -53,21 +54,21 @@ jobs:
         env:
           DB_CONNECTION_STRING_MIGRATION: ${{ secrets.DB_CONNECTION_STRING_MIGRATION }}
 
-
       - name: dotnet publish
-        run: dotnet publish ${{ env.STARTUP_PROJECT_PATH }}${{ env.CSPROJ_FILE_NAME }} -c Release -o ${{ env.PUBLISH_OUTPUT_PATH }}
+        run: dotnet publish ${{ env.STARTUP_PROJECT_PATH }}${{ env.CSPROJ_FILE_NAME }} -c Release -o ${{ env.PUBLISH_DIR }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{ env.PUBLISH_OUTPUT_PATH }}
+          # MODIFIKASI: Gunakan variabel PUBLISH_DIR yang sudah didefinisikan
+          path: ${{ env.PUBLISH_DIR }}
 
   deploy:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production' # <- SESUAIKAN: Ganti dengan nama environment Anda di GitHub jika menggunakan Environments
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write
@@ -92,7 +93,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          # slot-name: 'Production'
           package: .
 
       - name: Logout from Azure
