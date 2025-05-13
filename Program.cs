@@ -7,6 +7,15 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+foreach (var env in Environment.GetEnvironmentVariables().Keys)
+{
+    Console.WriteLine($"Environment Variable: {env}");
+}
+
+foreach (var config in builder.Configuration.AsEnumerable())
+{
+    Console.WriteLine($"Config: {config.Key} = {config.Value}");
+}
 
 // --- Load Connection String ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
