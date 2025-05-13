@@ -37,7 +37,7 @@ jobs:
 
       # --- Migrasi Database ---
       - name: Install dotnet ef tool
-        run: dotnet tool install --global dotnet-ef --version 8.0.0 # <- SESUAIKAN: Versi EF Core Anda
+        run: dotnet tool install --global dotnet-ef
 
       # Menambahkan lokasi instalasi global tools ke variabel lingkungan PATH untuk runner Windows
       - name: Add dotnet ef to PATH
