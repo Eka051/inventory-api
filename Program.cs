@@ -1,65 +1,22 @@
-using API_Manajemen_Barang.Data;
+﻿using API_Manajemen_Barang.Data;
 using API_Manajemen_Barang.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddConsole();
 
-
-// Add services to the container.
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-var configuration = builder.Configuration;
-var connectionString = configuration.GetConnectionString("DefaultConnection")
+// --- Load Connection String ---
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? Environment.GetEnvironmentVariable("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddSwaggerGen(
-    option =>
-    {
-        option.SwaggerDoc("v1", new OpenApiInfo
-        {
-            Title = "Inventory API",
-            Version = "v1"
-        });
-
-        option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header,
-            Description = "Please enter a valid token",
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            BearerFormat = "JWT",
-            Scheme = "Bearer"
-        });
-
-        option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
-    }
-);
-
+// --- JWT ---
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -70,43 +27,66 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
-
         };
     });
 
-var app = builder.Build();
-using (var scope = app.Services.CreateScope())
+// --- Swagger ---
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(option =>
 {
-    var services = scope.ServiceProvider;
-    try
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Inventory API", Version = "v1" });
+
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        var dbContext = services.GetRequiredService<AppDbContext>();
-        dbContext.Database.Migrate();
-        DbSeeder.Seed(dbContext);
-    }
-    catch (Exception ex)
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+if (args.Contains("seed"))
+{
+    Console.WriteLine("⚙️ Running database migration + seeder...");
+    var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+        DbSeeder.Seed(db);  
     }
+
+    Console.WriteLine("✅ Seeding selesai.");
+    return;
 }
 
+var appNormal = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || true)
+if (appNormal.Environment.IsDevelopment() || true)
 {
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    appNormal.UseSwagger();
+    appNormal.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseRouting();
-app.UseAuthentication();
-app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+appNormal.UseHttpsRedirection();
+appNormal.UseRouting();
+appNormal.UseAuthentication();
+appNormal.UseMiddleware<ErrorHandlingMiddleware>();
+appNormal.UseAuthorization();
+appNormal.MapControllers();
+appNormal.Run();
