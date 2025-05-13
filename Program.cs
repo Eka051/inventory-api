@@ -7,17 +7,16 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.AddConsole();
 
 // --- Load Connection String ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? builder.Configuration["ConnectionStrings:DefaultConnection"]
-    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+    ?? Environment.GetEnvironmentVariable("DefaultConnection")
     ?? throw new InvalidOperationException("❌ Connection string 'DefaultConnection' not found.");
 Console.WriteLine($"📡 Connection string: {connectionString}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+builder.Logging.AddConsole();
 
 // --- JWT ---
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
