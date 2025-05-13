@@ -11,7 +11,10 @@ builder.Logging.AddConsole();
 
 // --- Load Connection String ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DefaultConnection");
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"]
+    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+    ?? throw new InvalidOperationException("❌ Connection string 'DefaultConnection' not found.");
+Console.WriteLine($"📡 Connection string: {connectionString}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
