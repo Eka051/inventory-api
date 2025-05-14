@@ -40,7 +40,7 @@ namespace API_Manajemen_Barang.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [ProducesResponseType(typeof(CategoryCreateDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -92,7 +92,7 @@ namespace API_Manajemen_Barang.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -137,7 +137,7 @@ namespace API_Manajemen_Barang.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
