@@ -1,6 +1,4 @@
-﻿using API_Manajemen_Barang.DTOs;
-using API_Manajemen_Barang.Models;
-using BCrypt.Net;
+﻿using API_Manajemen_Barang.src.Core.Entities;
 
 namespace API_Manajemen_Barang.src.Infrastructure.Data
 {
@@ -23,9 +21,10 @@ namespace API_Manajemen_Barang.src.Infrastructure.Data
 
                 context.Users.Add(new User
                 {
+                    Username = "Admin",
                     Name = "Admin",
-                    Email = "admin@mail.com",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+                    Email = "admin@gmail.com",
+                    Password = BCrypt.Net.BCrypt.HashPassword("admin123"),
                     RoleId = adminRole.RoleId
                 });
 

@@ -1,17 +1,23 @@
 ﻿using API_Manajemen_Barang.src.API.Middleware;
+using API_Manajemen_Barang.src.Application.Interfaces;
+using API_Manajemen_Barang.src.Application.Services;
 using API_Manajemen_Barang.src.Infrastructure.Data;
+using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
+using API_Manajemen_Barang.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -28,7 +34,7 @@ builder.Services.AddSwaggerGen(
         option.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "Inventory API",
-            Version = "v1"
+            Version = "v1",
         });
 
         option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

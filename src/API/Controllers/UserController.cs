@@ -1,5 +1,5 @@
-﻿using API_Manajemen_Barang.Models;
-using API_Manajemen_Barang.src.Application.DTOs;
+﻿using API_Manajemen_Barang.src.Application.DTOs;
+using API_Manajemen_Barang.src.Core.Entities;
 using API_Manajemen_Barang.src.Infrastructure.Data;
 using API_Manajemen_Barang.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -67,7 +67,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
                     return NotFound(new { success = false, message = "Role staff tidak ditemukan. Silahkan tambah terlebih dahulu" });
                 }
 
-                var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email.ToLower());
+                var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email!.ToLower());
                 if (existingUser != null)
                 {
                     return Conflict(new { success = false, message = "Email sudah terdaftar" });
@@ -83,13 +83,13 @@ namespace API_Manajemen_Barang.src.API.Controllers
                     return BadRequest(new { success = false, message = "Data staff tidak valid", errors });
                 }
 
-                var hashedPassword = PasswordHasherHelper.Hash(userDto.Password);
+                var hashedPassword = PasswordHasherHelper.Hash(userDto.Password!);
 
                 var user = new User
                 {
-                    Name = userDto.Name,
-                    Email = userDto.Email,
-                    PasswordHash = hashedPassword,
+                    Name = userDto.Name!,
+                    Email = userDto.Email!,
+                    Password = hashedPassword,
                     RoleId = role.RoleId
 
                 };
@@ -134,18 +134,18 @@ namespace API_Manajemen_Barang.src.API.Controllers
                     return StatusCode(500, new { success = false, message = "Role data is missing for the user." });
                 }
 
-                var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email.ToLower() && u.UserId != id);
+                var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == userDto.Email!.ToLower() && u.UserId != id);
                 if (existingUser != null)
                 {
                     return Conflict(new { success = false, message = "Email sudah terdaftar" });
                 }
 
-                user.Name = userDto.Name;
-                user.Email = userDto.Email;
+                user.Name = userDto.Name!;
+                user.Email = userDto.Email!;
                 user.RoleId = user.Role.RoleId;
                 if (!string.IsNullOrEmpty(userDto.Password))
                 {
-                    user.PasswordHash = PasswordHasherHelper.Hash(userDto.Password);
+                    user.Password = PasswordHasherHelper.Hash(userDto.Password);
                 }
 
                 _context.Users.Update(user);

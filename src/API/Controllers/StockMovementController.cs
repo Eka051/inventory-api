@@ -1,6 +1,5 @@
-﻿using API_Manajemen_Barang.DTOs;
-using API_Manajemen_Barang.Models;
-using API_Manajemen_Barang.src.Application.DTOs;
+﻿using API_Manajemen_Barang.src.Application.DTOs;
+using API_Manajemen_Barang.src.Core.Entities;
 using API_Manajemen_Barang.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
 
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(typeof(StockMovementCreateDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StockMovementResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllStockMovements()
@@ -44,7 +43,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
 
         [HttpPost]
         [Authorize]
-        [ProducesResponseType(typeof(StockMovementCreateDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(StockMovementResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,7 +96,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
                     ItemId = stockMovementDto.ItemId,
                     Type = stockMovementDto.MovementType,
                     Quantity = stockMovementDto.Quantity,
-                    Note = stockMovementDto.Note,
+                    Note = stockMovementDto.Note!,
                     CreatedAt = DateTime.UtcNow
                 };
 

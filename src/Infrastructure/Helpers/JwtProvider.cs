@@ -1,4 +1,5 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
+﻿using API_Manajemen_Barang.src.Application.Interfaces;
+using API_Manajemen_Barang.src.Core.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,11 +7,11 @@ using System.Text;
 
 namespace API_Manajemen_Barang.src.Infrastructure.Helpers
 {
-    public class JwtHelper
+    public class JwtProvider : IJwtProvider
     {
         private readonly IConfiguration _configuration;
 
-        public JwtHelper(IConfiguration configuration)
+        public JwtProvider(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -43,8 +44,6 @@ namespace API_Manajemen_Barang.src.Infrastructure.Helpers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Role.RoleName),
-                new Claim(ClaimTypes.Name, user.Name)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration!["Jwt:RefreshSecret"]!));

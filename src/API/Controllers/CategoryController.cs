@@ -1,9 +1,7 @@
-﻿using API_Manajemen_Barang.DTO;
-using API_Manajemen_Barang.Models;
-using API_Manajemen_Barang.src.Application.DTOs;
+﻿using API_Manajemen_Barang.src.Application.DTOs;
+using API_Manajemen_Barang.src.Core.Entities;
 using API_Manajemen_Barang.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Manajemen_Barang.src.API.Controllers
@@ -41,7 +39,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
 
         [HttpPost]
         [Authorize]
-        [ProducesResponseType(typeof(CategoryCreateDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -63,7 +61,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
                     return BadRequest(new { success = false, message = "Data kategori tidak valid", errors });
                 }
 
-                var existingCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
+                var existingCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name!.ToLower());
                 if (existingCategory != null)
                 {
                     return Conflict(new { success = false, message = $"Kategori {existingCategory.Name} sudah ada. Tambahkan kategori lain" });
@@ -71,8 +69,8 @@ namespace API_Manajemen_Barang.src.API.Controllers
 
                 var category = new Category
                 {
-                    Name = categoryDto.Name,
-                    Description = categoryDto.Description
+                    Name = categoryDto.Name!,
+                    Description = categoryDto.Description!
                 };
 
                 var response = new
@@ -115,7 +113,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
             {
                 return NotFound(new { success = false, message = "Kategori tidak ditemukan" });
             }
-            else if (categoryDto.Name.ToLower() != existingCategory.Name.ToLower())
+            else if (categoryDto.Name!.ToLower() != existingCategory.Name.ToLower())
             {
                 var duplicateCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
                 if (duplicateCategory != null)
@@ -124,7 +122,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
                 }
             }
             existingCategory.Name = categoryDto.Name;
-            existingCategory.Description = categoryDto.Description;
+            existingCategory.Description = categoryDto.Description!;
             var response = new CategoryResponseDto
             {
                 CategoryId = existingCategory.CategoryId,

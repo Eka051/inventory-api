@@ -1,6 +1,5 @@
-﻿using API_Manajemen_Barang.Middleware;
-using API_Manajemen_Barang.Models;
-using API_Manajemen_Barang.src.Application.DTOs;
+﻿using API_Manajemen_Barang.src.Application.DTOs;
+using API_Manajemen_Barang.src.Core.Entities;
 using API_Manajemen_Barang.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
