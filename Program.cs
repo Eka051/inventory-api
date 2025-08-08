@@ -1,5 +1,5 @@
-﻿using API_Manajemen_Barang.Data;
-using API_Manajemen_Barang.Middleware;
+﻿using API_Manajemen_Barang.src.API.Middleware;
+using API_Manajemen_Barang.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
