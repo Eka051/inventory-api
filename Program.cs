@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(
         option.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "Inventory API",
-            Version = "v1",
+            Version = "v1.0.1",
         });
 
         option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -51,19 +51,23 @@ builder.Services.AddSwaggerGen(
         });
 
         option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
         {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] { }
+            }
+        });
+
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        option.IncludeXmlComments(xmlPath);
     }
 );
 

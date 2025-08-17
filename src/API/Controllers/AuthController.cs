@@ -18,6 +18,13 @@ namespace API_Manajemen_Barang.src.API.Controllers
             _authService = authService;
         }
 
+        /// <summary>
+        ///  To authenticate user
+        /// </summary>
+        /// <remarks>
+        /// Endpoint: <b>POST</b> <code>/api/auth/login</code>
+        /// Example: <a href="/api/auth/login">/api/auth/login</a>
+        /// </remarks>
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoginDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -25,7 +32,7 @@ namespace API_Manajemen_Barang.src.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var token = await _authService.LoginAsync(dto);
-            return Ok(new {Token = token});
+            return Ok(new { Token = token });
         }
     }
 }
