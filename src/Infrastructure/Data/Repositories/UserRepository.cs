@@ -21,5 +21,6 @@ namespace API_Manajemen_Barang.src.Infrastructure.Data.Repositories
         {
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
         }
+
     }
 }

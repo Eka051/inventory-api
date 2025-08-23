@@ -1,9 +1,10 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
+﻿using API_Manajemen_Barang.src.Application.Interfaces;
+using API_Manajemen_Barang.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_Manajemen_Barang.src.Infrastructure.Data.Repositories
 {
-    public class ItemRepository
+    public class ItemRepository : IItemRepository
     {
         private readonly AppDbContext _context;
 
@@ -12,14 +13,40 @@ namespace API_Manajemen_Barang.src.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Item>> GetAllItem() 
+        public async Task<Item> GetByIdAsync(int itemId)
         {
-            return await _context.Items.Include((i) => i.Category).ToListAsync();
+            return await _context.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.ItemId == itemId);
         }
 
-        public async Task<List<Item>> GetItemByName(string name)
+        public async Task<IEnumerable<Item>> GetAllAsync()
         {
-            return await _context.Items.Include((i) => i.Category).Where((i) => i.Name.Contains(name.ToLower())).ToListAsync();
+            return await _context.Items.Include(i => i.Category).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Item>> FindByNameAsync(string name)
+        {
+            return await _context.Items.Include(i => i.Category)
+                .Where(i => i.Name.ToLower().Contains(name.ToLower()))
+                .ToListAsync();
+        }
+
+        public async Task<bool> IsItemNameExistAsync(string name)
+        {
+            return await _context.Items.AnyAsync(i => i.Name.ToLower() == name.ToLower());
+        }
+
+        public async Task AddAsync(Item item)
+        {
+            await _context.Items.AddAsync(item);
+        }
+
+        public void Update(Item item)
+        {
+            _context.Items.Update(item);
+        }
+        public void Delete(Item item)
+        {
+            _context.Items.Remove(item);
         }
     }
 }
