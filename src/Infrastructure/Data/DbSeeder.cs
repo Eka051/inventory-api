@@ -1,6 +1,6 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
+﻿using Inventory_api.src.Core.Entities;
 
-namespace API_Manajemen_Barang.src.Infrastructure.Data
+namespace Inventory_api.src.Infrastructure.Data
 {
     public static class DbSeeder
     {

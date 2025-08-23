@@ -1,5 +1,5 @@
-﻿using API_Manajemen_Barang.src.Application.DTOs;
-namespace API_Manajemen_Barang.src.Application.Interfaces
+﻿using Inventory_api.src.Application.DTOs;
+namespace Inventory_api.src.Application.Interfaces
 {
     public interface IAuthService
     {

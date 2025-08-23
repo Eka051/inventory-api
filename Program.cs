@@ -1,9 +1,9 @@
-﻿using API_Manajemen_Barang.src.API.Middleware;
-using API_Manajemen_Barang.src.Application.Interfaces;
-using API_Manajemen_Barang.src.Application.Services;
-using API_Manajemen_Barang.src.Infrastructure.Data;
-using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
-using API_Manajemen_Barang.src.Infrastructure.Helpers;
+﻿using Inventory_api.src.API.Middleware;
+using Inventory_api.src.Application.Interfaces;
+using Inventory_api.src.Application.Services;
+using Inventory_api.src.Infrastructure.Data;
+using Inventory_api.src.Infrastructure.Data.Repositories;
+using Inventory_api.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

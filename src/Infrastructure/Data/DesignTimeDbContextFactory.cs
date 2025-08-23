@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Manajemen_Barang.src.Infrastructure.Data
+namespace Inventory_api.src.Infrastructure.Data
 {
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {

@@ -1,12 +1,12 @@
-﻿using API_Manajemen_Barang.src.Application.DTOs;
-using API_Manajemen_Barang.src.Application.Interfaces;
-using API_Manajemen_Barang.src.Infrastructure.Data;
-using API_Manajemen_Barang.src.Infrastructure.Helpers;
+﻿using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Application.Interfaces;
+using Inventory_api.src.Infrastructure.Data;
+using Inventory_api.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace API_Manajemen_Barang.src.API.Controllers
+namespace Inventory_api.src.API.Controllers
 {
     [ApiController]
     [Route("api/auth")]

@@ -1,11 +1,11 @@
-﻿using API_Manajemen_Barang.src.Application.Interfaces;
-using API_Manajemen_Barang.src.Core.Entities;
+﻿using Inventory_api.src.Application.Interfaces;
+using Inventory_api.src.Core.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace API_Manajemen_Barang.src.Infrastructure.Helpers
+namespace Inventory_api.src.Infrastructure.Helpers
 {
     public class JwtProvider : IJwtProvider
     {

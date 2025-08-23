@@ -1,4 +1,4 @@
-﻿namespace API_Manajemen_Barang.src.Infrastructure.Helpers
+﻿namespace Inventory_api.src.Infrastructure.Helpers
 {
     public class PasswordHasherHelper
     {

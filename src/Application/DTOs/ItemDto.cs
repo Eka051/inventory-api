@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API_Manajemen_Barang.src.Application.DTOs
+namespace Inventory_api.src.Application.DTOs
 {
     public class ItemDto
     {

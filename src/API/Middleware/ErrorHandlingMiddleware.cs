@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 
-namespace API_Manajemen_Barang.src.API.Middleware
+namespace Inventory_api.src.API.Middleware
 {
     public class ErrorHandlingMiddleware
     {

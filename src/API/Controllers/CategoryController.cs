@@ -1,10 +1,10 @@
-﻿using API_Manajemen_Barang.src.Application.DTOs;
-using API_Manajemen_Barang.src.Core.Entities;
-using API_Manajemen_Barang.src.Infrastructure.Data;
+﻿using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Core.Entities;
+using Inventory_api.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_Manajemen_Barang.src.API.Controllers
+namespace Inventory_api.src.API.Controllers
 {
     [Route("api/categories")]
     [ApiController]

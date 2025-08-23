@@ -1,4 +1,4 @@
-﻿namespace API_Manajemen_Barang.src.Core.Entities
+﻿namespace Inventory_api.src.Core.Entities
 {
     public class RefreshToken
     {

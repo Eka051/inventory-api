@@ -1,35 +1,34 @@
-﻿using API_Manajemen_Barang.src.Application.Interfaces;
-using API_Manajemen_Barang.src.Core.Entities;
-using API_Manajemen_Barang.src.Infrastructure.Data;
+﻿using API_Manajemen_Barang.src.Application.Exceptions;
+using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Application.Interfaces;
 
-namespace API_Manajemen_Barang.src.Application.Services
+namespace Inventory_api.src.Application.Services
 {
     public class ItemService : IItemService
     {
-        private readonly AppDbContext _appDbContext;
         private readonly IItemRepository _itemRepository;
         
-        public ItemService(AppDbContext appDbContext, IItemRepository itemRepository)
+        public ItemService(IItemRepository itemRepository)
         {
-            _appDbContext = appDbContext;
             _itemRepository = itemRepository;
         }
 
-        public async Task<List<Item?>> GetAllItem()
+        public async Task<ItemResponseDto> GetItemByIdAsync(int itemId)
         {
-            return await _itemRepository.GetAllItemAsync();
+            var item = await _itemRepository.GetByIdAsync(itemId);
+            if (item == null)
+            {
+                throw new NotFoundException($"Item with ID {itemId} not found");
+            }
+            return new ItemResponseDto
+            {
+                ItemId = item.ItemId,
+                Name = item.Name,
+                Stock = item.Stock,
+                Description = item.Description,
+                CategoryId = item.CategoryId,
+                CategoryName = item.Category.Name
+            };
         }
-
-        public async Task<Item?> GetItemById(int id)
-        {
-
-        }
-
-        public async Task<Item?> GetItemByName(string name)
-        {
-
-        }
-
-
     }
 }

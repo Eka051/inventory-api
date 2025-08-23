@@ -1,11 +1,15 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
+﻿using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Core.Entities;
 
-namespace API_Manajemen_Barang.src.Application.Interfaces
+namespace Inventory_api.src.Application.Interfaces
 {
     public interface IItemService
     {
-        Task<Item?> GetAllItem();
-        Task<Item?> GetItemById(int id);
-        Task<Item?> GetItemByName(string name);
+        Task<ItemResponseDto> GetItemByIdAsync(int itemId);
+        Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync();
+        Task<IEnumerable<ItemResponseDto>> SearchNameByNameAsync(string name);
+        Task<ItemResponseDto> CreateNewItemAsync(ItemCreateDto itemDto);
+        Task UpdateItemAsync(int itemId, ItemCreateDto itemDto);
+        Task DeleteItemAsync(int itemId);
     }
 }

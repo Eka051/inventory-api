@@ -1,7 +1,7 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
+﻿using Inventory_api.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Manajemen_Barang.src.Infrastructure.Data
+namespace Inventory_api.src.Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {
