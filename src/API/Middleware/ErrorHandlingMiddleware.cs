@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using API_Manajemen_Barang.src.Application.Exceptions;
+using System.Net;
 using System.Text.Json;
 
 namespace Inventory_api.src.API.Middleware
@@ -18,45 +19,47 @@ namespace Inventory_api.src.API.Middleware
             try
             {
                 await _next(context);
-
-                if (!context.Response.HasStarted)
-                {
-                    if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
-                    {
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                        {
-                            success = false,
-                            message = "Belum terautentikasi. Login terlebih dahulu"
-                        }));
-                    }
-                    else if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden)
-                    {
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                        {
-                            success = false,
-                            message = "Akses ditolak. Anda tidak memiliki izin untuk mengakses data ini"
-                        }));
-                    }
-                }
             }
             catch (Exception e)
             {
-                if (!context.Response.HasStarted)
-                {
-                    context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    var result = JsonSerializer.Serialize(new
-                    {
-                        success = false,
-                        message = "Terjadi kesalahan pada server",
-                        error = e.Message
-                    });
-                    await context.Response.WriteAsync(result);
-                }
-                _logger.LogError(e, "An error occurred while processing the request");
+                _logger.LogError(e, $"An error occured: {e.Message}");
+                await HandleExceptionAsync(context, e);
             }
+        }
+
+        public static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            context.Response.ContentType = "application/json";
+            HttpStatusCode statusCode;
+            string message;
+
+            switch (exception)
+            {
+                case BadRequestException _:
+                    statusCode = HttpStatusCode.BadRequest;
+                    message = exception.Message;
+                    break;
+                case UnauthorizedException _:
+                    statusCode = HttpStatusCode.Unauthorized;
+                    message = exception.Message;
+                    break;
+                case ConflictException _:
+                    statusCode = HttpStatusCode.Conflict;
+                    message = exception.Message;
+                    break;
+                case NotFoundException _:
+                    statusCode = HttpStatusCode.NotFound;
+                    message = exception.Message;
+                    break;
+                default:
+                    statusCode = HttpStatusCode.InternalServerError;
+                    message = exception.Message;
+                    break;
+            }
+
+            context.Response.StatusCode = (int)statusCode;
+            var result = JsonSerializer.Serialize(new {success = false, message = message});
+            return context.Response.WriteAsync(result);
         }
     }
 }
