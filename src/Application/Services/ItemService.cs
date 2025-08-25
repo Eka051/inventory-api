@@ -49,7 +49,7 @@ namespace Inventory_api.src.Application.Services
             return itemDtos;
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> SearchNameByNameAsync(string name)
+        public async Task<IEnumerable<ItemResponseDto>> SearchItemsByNameAsync(string name)
         {
             var item = await _itemRepository.FindByNameAsync(name);
             var itemData = item.Select(item => new ItemResponseDto

@@ -7,7 +7,7 @@ namespace Inventory_api.src.Application.Interfaces
     {
         Task<ItemResponseDto> GetItemByIdAsync(int itemId);
         Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync();
-        Task<IEnumerable<ItemResponseDto>> SearchNameByNameAsync(string name);
+        Task<IEnumerable<ItemResponseDto>> SearchItemsByNameAsync(string name);
         Task<ItemResponseDto> CreateNewItemAsync(ItemCreateDto itemDto);
         Task UpdateItemAsync(int itemId, ItemCreateDto itemDto);
         Task DeleteItemAsync(int itemId);
