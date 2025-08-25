@@ -1,4 +1,6 @@
 ﻿
+using API_Manajemen_Barang.src.Core.Entities;
+
 namespace Inventory_api.src.Core.Entities
 {
     public class Item
@@ -12,8 +14,6 @@ namespace Inventory_api.src.Core.Entities
         public int DefaultSellingPrice {  get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-
-        public ICollection<StockMovement> StockMovement { get; set; }
+        public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
     }
 }

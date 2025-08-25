@@ -1,4 +1,6 @@
 ﻿using API_Manajemen_Barang.src.Application.Exceptions;
+using API_Manajemen_Barang.src.Core.Entities;
+using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
@@ -8,10 +10,12 @@ namespace Inventory_api.src.Application.Services
     public class ItemService : IItemService
     {
         private readonly IItemRepository _itemRepository;
+        private readonly CategoryRepository _categoryRepository;
         
-        public ItemService(IItemRepository itemRepository)
+        public ItemService(IItemRepository itemRepository, CategoryRepository categoryRepository)
         {
             _itemRepository = itemRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<ItemResponseDto> GetItemByIdAsync(int itemId)
@@ -25,7 +29,7 @@ namespace Inventory_api.src.Application.Services
             {
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Stock,
+                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
                 Description = item.Description,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
@@ -40,7 +44,7 @@ namespace Inventory_api.src.Application.Services
 
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Stock,
+                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
                 Description = item.Description,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
@@ -57,7 +61,7 @@ namespace Inventory_api.src.Application.Services
 
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Stock,
+                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
                 Description = item.Description,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
@@ -75,20 +79,34 @@ namespace Inventory_api.src.Application.Services
             var item = new Item
             {
                 Name = itemDto.Name,
-                Stock = itemDto.Stock,
                 Description = itemDto.Description,
                 CategoryId = itemDto.CategoryId,
             };
 
+            var initialInventory = new Inventory
+            {
+                WarehouseId = itemDto.WarehouseId,
+                Quantity = itemDto.Stock,
+                ReserveQuantity = 0
+            };
+
+            item.Inventories.Add(initialInventory);
+
+
             await _itemRepository.AddAsync(item);
+            var category = await _categoryRepository.GetByIdAsync(item.CategoryId);
+            var categoryName = category?.Name ?? string.Empty;
+
+
+
             return new ItemResponseDto
             {
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Stock,
+                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
                 Description = item.Description,
                 CategoryId = item.CategoryId,
-                CategoryName = item.Category.Name
+                CategoryName = categoryName,
             };
         }
 
@@ -101,7 +119,6 @@ namespace Inventory_api.src.Application.Services
             }
 
             item.Name = itemDto.Name;
-            item.Stock = itemDto.Stock;
             item.Description = itemDto.Description;
             item.CategoryId = itemDto.CategoryId;
 

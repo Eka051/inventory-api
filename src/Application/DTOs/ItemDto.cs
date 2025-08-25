@@ -17,6 +17,8 @@ namespace Inventory_api.src.Application.DTOs
         public string Description { get; set; }
         [Required]
         public int CategoryId { get; set; }
+        [Required]
+        public int WarehouseId { get; set; }
     }
 
     public class ItemResponseDto
