@@ -10,6 +10,8 @@
         public Province? province { get; set; }
         public City? city { get; set; }
         public District? district { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public ICollection<Warehouse> Warehouse { get; set; }
     }
 }

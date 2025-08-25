@@ -1,4 +1,5 @@
-﻿using Inventory_api.src.Core.Entities;
+﻿using API_Manajemen_Barang.src.Core.Entities;
+using Inventory_api.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory_api.src.Infrastructure.Data
@@ -13,6 +14,10 @@ namespace Inventory_api.src.Infrastructure.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Province> Provinces { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<District> Districts { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

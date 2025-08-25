@@ -7,5 +7,7 @@
         public bool IsActive { get; set; }
         public int LocationId { get; set; }
         public Location Location { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
