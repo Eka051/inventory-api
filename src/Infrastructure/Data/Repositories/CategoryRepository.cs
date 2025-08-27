@@ -23,5 +23,32 @@ namespace API_Manajemen_Barang.src.Infrastructure.Data.Repositories
         {
             return await _context.Categories.Include(i => i.Items).FirstOrDefaultAsync(c => c.CategoryId == id);
         }
+
+        public async Task<Category?> GetByNameAsync(string name)
+        {
+            return await _context.Categories.Include(i => i.Items)
+                .Where(c => c.Name.ToLower().Contains(name.ToLower()))
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> IsCategoryExist(string name)
+        {
+            return await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower());
+        }
+
+        public async Task AddAsync(Category category)
+        {
+            await _context.Categories.AddAsync(category);
+        }
+
+        public void UpdateAsync(Category category)
+        {
+            _context.Categories.Update(category);
+        }
+
+        public void DeleteAsync(Category category)
+        {
+            _context.Categories.Remove(category);
+        }
     }
 }

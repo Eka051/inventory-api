@@ -13,7 +13,7 @@ namespace Inventory_api.src.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<Item> GetByIdAsync(int itemId)
+        public async Task<Item?> GetByIdAsync(int itemId)
         {
             return await _context.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.ItemId == itemId);
         }
