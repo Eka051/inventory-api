@@ -6,5 +6,7 @@
         public string DistrictName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public int CityId { get; set; }
+        public virtual City City { get; set; }
     }
 }

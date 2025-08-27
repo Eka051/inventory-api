@@ -10,6 +10,6 @@ namespace API_Manajemen_Barang.src.Application.Interfaces
         public Task<bool> IsCategoryExist(string name);
         Task AddAsync(Category category);
         void UpdateAsync(Category category);
-        void DeleteAsync(Category category);
+        void DeleteAsync(int id);
     }
 }

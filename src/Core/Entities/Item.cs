@@ -11,9 +11,10 @@ namespace Inventory_api.src.Core.Entities
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public int DefaultPurchasePrice { get; set; }
-        public int DefaultSellingPrice {  get; set; }
+        public int DefaultSellingPrice { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
+        public virtual ICollection<Inventory> Inventories { get; set; }
+        public virtual ICollection<StockMovement> StockMovements { get; set; }
     }
 }

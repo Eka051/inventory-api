@@ -7,5 +7,7 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public ICollection<District> Districts { get; set; }
+        public int ProvinceId { get; set; }
+        public virtual Province Province { get; set; }
     }
 }

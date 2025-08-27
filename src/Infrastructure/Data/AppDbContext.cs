@@ -15,6 +15,7 @@ namespace Inventory_api.src.Infrastructure.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Province> Provinces { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<District> Districts { get; set; }
@@ -29,24 +30,42 @@ namespace Inventory_api.src.Infrastructure.Data
                 .HasForeignKey(u => u.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Inventory>()
+                .HasKey(inv => new { inv.ItemId, inv.WarehouseId });
+
+            // Item -> Inventory
             modelBuilder.Entity<Item>()
-                .HasMany(i => i.StockMovements)
-                .WithOne()
-                .HasForeignKey(sm => sm.ItemId)
+                .HasMany(i => i.Inventories)
+                .WithOne(inv => inv.Item)
+                .HasForeignKey(inv => inv.ItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Warehouse -> Inventory
+            modelBuilder.Entity<Warehouse>()
+                .HasMany(w => w.Inventory)
+                .WithOne(inv => inv.Warehouse)
+                .HasForeignKey(inv => inv.WarehouseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Category -> Item
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.Items)
                 .WithOne(i => i.Category)
                 .HasForeignKey(i => i.CategoryId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<StockMovement>()
-                .HasOne(sm => sm.Item)
-                .WithMany(i => i.StockMovements)
-                .HasForeignKey(sm => sm.ItemId)
-                .OnDelete(DeleteBehavior.Cascade);
 
+            // Province -> City
+            modelBuilder.Entity<Province>()
+                .HasMany(p => p.Cities)
+                .WithOne(c => c.Province)
+                .HasForeignKey(c => c.ProvinceId);
+
+            // City -> District
+            modelBuilder.Entity<City>()
+                .HasMany(c => c.Districts)
+                .WithOne(d => d.City)
+                .HasForeignKey(c => c.CityId);
         }
     }
 }

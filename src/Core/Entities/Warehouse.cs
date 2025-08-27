@@ -9,5 +9,6 @@
         public Location Location { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public ICollection<Inventory> Inventory { get; set; }
     }
 }

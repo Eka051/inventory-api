@@ -46,8 +46,10 @@ namespace API_Manajemen_Barang.src.Infrastructure.Data.Repositories
             _context.Categories.Update(category);
         }
 
-        public void DeleteAsync(Category category)
+        public void DeleteAsync(int id)
         {
+            var category = new Category { CategoryId = id };
+            _context.Categories.Attach(category);
             _context.Categories.Remove(category);
         }
     }
