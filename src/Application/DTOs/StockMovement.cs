@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API_Manajemen_Barang.src.Core.Entities.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventory_api.src.Application.DTOs
 {
@@ -6,7 +7,7 @@ namespace Inventory_api.src.Application.DTOs
     {
         public int ItemId { get; set; }
         public int Quantity { get; set; }
-        public string? MovementType { get; set; } // "in" or "out"
+        public StockMovementType MovementType { get; set; } 
         public string? Note { get; set; }
     }
 
@@ -15,7 +16,7 @@ namespace Inventory_api.src.Application.DTOs
         public int StockMovementId { get; set; }
         public int ItemId { get; set; }
         public int Quantity { get; set; }
-        public string? MovementType { get; set; } // "in" or "out"
+        public StockMovementType MovementType { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; }
     }

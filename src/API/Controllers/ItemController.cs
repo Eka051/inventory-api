@@ -1,5 +1,5 @@
-﻿using Inventory_api.src.Application.DTOs;
-using Inventory_api.src.Application.Services;
+﻿using API_Manajemen_Barang.src.Application.Interfaces;
+using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Core.Entities;
 using Inventory_api.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;

@@ -5,7 +5,7 @@ using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
 
-namespace Inventory_api.src.Application.Services
+namespace API_Manajemen_Barang.src.Application.Interfaces
 {
     public class ItemService : IItemService
     {

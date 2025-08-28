@@ -47,6 +47,13 @@ namespace Inventory_api.src.Infrastructure.Data
                 .HasForeignKey(inv => inv.WarehouseId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Warehouse ->  Location
+            modelBuilder.Entity<Warehouse>()
+                .HasMany(w => w.Inventory)
+                .WithOne(inv => inv.Warehouse)
+                .HasForeignKey(inv => inv.WarehouseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Category -> Item
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.Items)
@@ -54,18 +61,38 @@ namespace Inventory_api.src.Infrastructure.Data
                 .HasForeignKey(i => i.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Item -> StockMovement
+            modelBuilder.Entity<Item>()
+                .HasMany(i => i.StockMovements)
+                .WithOne(sm => sm.Item)
+                .HasForeignKey(sm => sm.Item)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Province -> City
             modelBuilder.Entity<Province>()
                 .HasMany(p => p.Cities)
                 .WithOne(c => c.Province)
-                .HasForeignKey(c => c.ProvinceId);
+                .HasForeignKey(c => c.ProvinceId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // City -> District
             modelBuilder.Entity<City>()
                 .HasMany(c => c.Districts)
                 .WithOne(d => d.City)
-                .HasForeignKey(c => c.CityId);
+                .HasForeignKey(c => c.CityId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Purchase Order -> Purchase Order Item
+            modelBuilder.Entity<PurchaseOrder>()
+                .HasMany(po => po.Items)
+                .WithOne(poi => poi.PurchaseOrder)
+                .HasForeignKey(poi => poi.PurchaseOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PurchaseOrderItem>()
+                .HasOne(poi => poi.Item)
+                .WithMany()
+                .HasForeignKey(poi => poi.ItemId);
         }
     }
 }
