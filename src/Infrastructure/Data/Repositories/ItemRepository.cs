@@ -34,7 +34,7 @@ namespace Inventory_api.src.Infrastructure.Data.Repositories
             return await _context.Items
                 .AsNoTracking()
                 .Include(i => i.Category)
-                .Include(i => i.Inve)
+                .Include(i => i.Inventories)
                 .Where(i => i.Name.ToLower().Contains(name.ToLower()))
                 .ToListAsync();
         }

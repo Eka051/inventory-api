@@ -54,24 +54,13 @@ namespace API_Manajemen_Barang.src.Infrastructure.Data.Repositories
             await _context.Categories.AddAsync(category);
         }
 
-        public void UpdateAsync(Category category)
+        public void Update(Category category)
         {
             _context.Categories.Update(category);
         }
 
-        public async Task DeleteAsync(int id)
+        public void Delete(Category category)
         {
-            if (id <= 0)
-            {
-                throw new BadRequestException($"ID {id} Invalid. Please check and try again!");
-            }
-
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                throw new NotFoundException($"Cattegory with ID {id} not found");
-            }
-
             _context.Categories.Remove(category);
         }
     }
