@@ -1,10 +1,7 @@
 ﻿using Inventory_api.src.Application.Services;
 using Inventory_api.src.Application.DTOs;
-using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Inventory_api.src.API.Controllers
 {
@@ -29,6 +26,17 @@ namespace Inventory_api.src.API.Controllers
             return Ok(new {success = true, data = stockMovements});
         }
 
+        [HttpGet("{id}")]
+        [Authorize]
+        [ProducesResponseType(typeof(StockMovementResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetStockMovementById(int stockMovementId)
+        {
+            var stockMovements = await _stockMovementService.GetByIdAsync(stockMovementId);
+            return Ok(new {success = true, data = stockMovements});
+        }
+
         [HttpPost]
         [Authorize]
         [ProducesResponseType(typeof(StockMovementResponseDto), StatusCodes.Status201Created)]
@@ -37,8 +45,19 @@ namespace Inventory_api.src.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateStockMovement([FromBody] StockMovementCreateDto stockMovementDto)
         {
-            var stock = await _stockMovementService.CreateaStockMovementAsync(stockMovementDto);
-            return CreatedAtAction(new {success = true, data = stock});
+            var createdEntity = await _stockMovementService.CreateaStockMovementAsync(stockMovementDto);
+
+            var responseDto = new StockMovementResponseDto
+            {
+                StockMovementId = createdEntity.StockMovementId,
+                ItemId = createdEntity.ItemId,
+                Quantity = createdEntity.Quantity,
+                MovementType = stockMovementDto.MovementType,
+                Note = createdEntity.Note,
+                CreatedAt = createdEntity.CreatedAt
+            };
+
+            return CreatedAtAction(nameof(GetAllStockMovements), new {id = responseDto.StockMovementId}, new {success = true, data = responseDto});
         }
     }
 }

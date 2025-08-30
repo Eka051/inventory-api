@@ -88,7 +88,20 @@ namespace Inventory_api.src.Application.Services
             }
             
             var stockMovement  = await _stockMovementRepository.GetByIdAsync(id);
-            return 
+            if (stockMovement == null)
+            {
+                throw new NotFoundException($"Stock Movement with ID {id} not found");
+            }
+
+            return new StockMovementResponseDto
+            {
+                StockMovementId = stockMovement.StockMovementId,
+                MovementType = stockMovement.Type,
+                ItemId = stockMovement.ItemId,
+                Quantity = stockMovement.Quantity,
+                Note = stockMovement.Note,
+                CreatedAt = stockMovement.CreatedAt,
+            };
         }
     }
 }

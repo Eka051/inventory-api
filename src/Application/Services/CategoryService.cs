@@ -1,7 +1,6 @@
 ﻿using Inventory_api.src.Application.Exceptions;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.DTOs;
-using Inventory_api.src.Application.Exceptions;
 using Inventory_api.src.Core.Entities;
 
 namespace Inventory_api.src.Application.Services
@@ -62,7 +61,7 @@ namespace Inventory_api.src.Application.Services
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
             {
-                return null;
+                throw new NotFoundException($"Category with ID {id} not found");
             }
 
             return new CategoryResponseDto
@@ -91,7 +90,7 @@ namespace Inventory_api.src.Application.Services
 
             categoryToUpdate.Name = categoryDto.Name;
 
-            _categoryRepository.UpdateAsync(categoryToUpdate);
+            _categoryRepository.Update(categoryToUpdate);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -103,7 +102,7 @@ namespace Inventory_api.src.Application.Services
                 throw new NotFoundException($"Category with ID {id} not found");
             }
 
-            _categoryRepository.DeleteAsync(id);
+            _categoryRepository.Delete(category);
             await _unitOfWork.SaveChangesAsync();
         }
 

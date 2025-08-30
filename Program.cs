@@ -2,10 +2,7 @@
 using Inventory_api.src.Application.Services;
 using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.API.Middleware;
-using Inventory_api.src.Application.Interfaces;
-using Inventory_api.src.Application.Services;
 using Inventory_api.src.Infrastructure.Data;
-using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -31,11 +28,6 @@ builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IStockMovementService, StockMovementService>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
-
-
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var configuration = builder.Configuration;
 var connectionString = configuration.GetConnectionString("DefaultConnection")
