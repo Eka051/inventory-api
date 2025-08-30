@@ -41,7 +41,6 @@ namespace API_Manajemen_Barang.src.Application.Services
             var items = await _itemRepository.GetAllAsync();
             var itemDtos = items.Select(item => new ItemResponseDto
             {
-
                 ItemId = item.ItemId,
                 Name = item.Name,
                 Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
