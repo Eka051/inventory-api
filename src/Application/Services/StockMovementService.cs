@@ -79,5 +79,16 @@ namespace Inventory_api.src.Application.Services
 
             return response;
         }
+
+        public async Task<StockMovementResponseDto> GetByIdAsync(int id)
+        {
+            if (id <= 0)
+            {
+                throw new BadRequestException($"ID {id} Invalid. Please check and try again!");
+            }
+            
+            var stockMovement  = await _stockMovementRepository.GetByIdAsync(id);
+            return 
+        }
     }
 }

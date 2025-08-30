@@ -3,10 +3,10 @@
     public class District
     {
         public int DistrictId { get; set; }
-        public required string DistrictName { get; set; }
+        public string DistrictName { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int CityId { get; set; }
-        public virtual required City City { get; set; }
+        public virtual City City { get; set; } = null!;
     }
 }

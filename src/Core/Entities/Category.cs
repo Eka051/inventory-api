@@ -3,9 +3,9 @@
     public class Category
     {
         public int CategoryId { get; set; }
-        public required string Name { get; set; }
+        public string Name { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public virtual ICollection<Item>? Items { get; set; }
+        public virtual ICollection<Item> Items { get; set; } = null!;
     }
 }

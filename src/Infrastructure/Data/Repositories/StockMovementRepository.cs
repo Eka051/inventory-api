@@ -1,6 +1,5 @@
 ﻿using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory_api.src.Infrastructure.Data.Repositories
@@ -15,7 +14,17 @@ namespace Inventory_api.src.Infrastructure.Data.Repositories
 
         public async Task<IEnumerable<StockMovement>> GetAllAsync()
         {
-            return await _context.StockMovements.OrderByDescending(sm => sm.CreatedAt).ToListAsync();
+            return await _context.StockMovements
+                .AsNoTracking()
+                .Include(sm => sm.Item)
+                .Include(sm => sm.Warehouse)
+                .OrderByDescending(sm => sm.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<StockMovement?> GetByIdAsync(int id)
+        {
+            return await _context.StockMovements.FindAsync(id);
         }
 
         public async Task AddAsync(StockMovement stockMovement)

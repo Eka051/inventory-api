@@ -3,7 +3,6 @@ using Inventory_api.src.Core.Entities;
 using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Interfaces;
-using Inventory_api.src.Core.Entities;
 
 namespace Inventory_api.src.Application.Services
 {
@@ -30,7 +29,7 @@ namespace Inventory_api.src.Application.Services
                 ItemId = item.ItemId,
                 Name = item.Name,
                 Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
-                Description = item.Description,
+                Description = item.Description ?? string.Empty,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
             };
@@ -44,7 +43,7 @@ namespace Inventory_api.src.Application.Services
                 ItemId = item.ItemId,
                 Name = item.Name,
                 Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
-                Description = item.Description,
+                Description = item.Description ?? string.Empty,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
             });
@@ -61,7 +60,7 @@ namespace Inventory_api.src.Application.Services
                 ItemId = item.ItemId,
                 Name = item.Name,
                 Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
-                Description = item.Description,
+                Description = item.Description ?? string.Empty,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
             });
@@ -80,6 +79,8 @@ namespace Inventory_api.src.Application.Services
                 throw new ConflictException($"Item with name {itemDto.Name} already exists");
             }
 
+            
+
             var item = new Item
             {
                 Name = itemDto.Name,
@@ -87,7 +88,9 @@ namespace Inventory_api.src.Application.Services
                 CategoryId = itemDto.CategoryId,
             };
 
-            var initialInventory = new Inventory                           
+            
+
+            var initialInventory = new Inventory
             {
                 WarehouseId = itemDto.WarehouseId,
                 Quantity = itemDto.Stock,

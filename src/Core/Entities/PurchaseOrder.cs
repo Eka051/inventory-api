@@ -3,11 +3,11 @@
     public class PurchaseOrder
     {
         public int PurchaseOrderId { get; set; }
-        public required string PoNumber { get; set; }
+        public string PoNumber { get; set; } = null!;
         public int SupplierId { get; set; }
         public DateTime OrderDate { get; set; }
-        public required string Status { get; set; }
-        public virtual required ICollection<PurchaseOrderItem> Items { get; set; }
+        public string Status { get; set; } = null!;
+        public virtual ICollection<PurchaseOrderItem> Items { get; set; } = null!;
 
     }
 }

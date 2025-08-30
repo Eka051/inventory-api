@@ -1,5 +1,4 @@
 ﻿using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory_api.src.Infrastructure.Data
