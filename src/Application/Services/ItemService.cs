@@ -29,7 +29,7 @@ namespace API_Manajemen_Barang.src.Application.Services
             {
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
+                Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
                 Description = item.Description,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
@@ -44,7 +44,7 @@ namespace API_Manajemen_Barang.src.Application.Services
 
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
+                Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
                 Description = item.Description,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
@@ -61,7 +61,7 @@ namespace API_Manajemen_Barang.src.Application.Services
 
                 ItemId = item.ItemId,
                 Name = item.Name,
-                Stock = item.Inventories.Sum((inventory) => inventory.Quantity),
+                Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
                 Description = item.Description,
                 CategoryId = item.CategoryId,
                 CategoryName = item.Category.Name
@@ -73,7 +73,7 @@ namespace API_Manajemen_Barang.src.Application.Services
         {
             if (itemDto == null)
             {
-                throw new ArgumentException("Item name can't be empty");
+                throw new BadRequestException("Item name can't be empty");
             }
 
             if (await _itemRepository.IsItemNameExistAsync(itemDto.Name))

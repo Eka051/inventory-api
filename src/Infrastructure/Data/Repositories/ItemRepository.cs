@@ -15,24 +15,35 @@ namespace Inventory_api.src.Infrastructure.Data.Repositories
 
         public async Task<Item?> GetByIdAsync(int itemId)
         {
-            return await _context.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.ItemId == itemId);
+            return await _context.Items.Include(i => i.Category)
+                .Include(i => i.Inventories)
+                .FirstOrDefaultAsync(i => i.ItemId == itemId);
         }
 
         public async Task<IEnumerable<Item>> GetAllAsync()
         {
-            return await _context.Items.Include(i => i.Category).ToListAsync();
+            return await _context.Items
+                .AsNoTracking()
+                .Include(i => i.Category)
+                .Include(i => i.Inventories)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Item>> FindByNameAsync(string name)
         {
-            return await _context.Items.Include(i => i.Category)
+            return await _context.Items
+                .AsNoTracking()
+                .Include(i => i.Category)
+                .Include(i => i.Inve)
                 .Where(i => i.Name.ToLower().Contains(name.ToLower()))
                 .ToListAsync();
         }
 
         public async Task<bool> IsItemNameExistAsync(string name)
         {
-            return await _context.Items.AnyAsync(i => i.Name.ToLower() == name.ToLower());
+            return await _context.Items
+                .AsNoTracking()
+                .AnyAsync(i => i.Name.ToLower() == name.ToLower());
         }
 
         public async Task AddAsync(Item item)
