@@ -1,6 +1,6 @@
-﻿using API_Manajemen_Barang.src.Application.Interfaces;
-using API_Manajemen_Barang.src.Application.Services;
-using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
+﻿using Inventory_api.src.Application.Interfaces;
+using Inventory_api.src.Application.Services;
+using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.API.Middleware;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.Services;

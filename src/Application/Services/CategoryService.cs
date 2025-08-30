@@ -1,9 +1,10 @@
-﻿using API_Manajemen_Barang.src.Application.Exceptions;
-using API_Manajemen_Barang.src.Application.Interfaces;
+﻿using Inventory_api.src.Application.Exceptions;
+using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Application.Exceptions;
 using Inventory_api.src.Core.Entities;
 
-namespace API_Manajemen_Barang.src.Application.Services
+namespace Inventory_api.src.Application.Services
 {
     public class CategoryService : ICategoryService
     {

@@ -1,6 +1,6 @@
 ﻿using Inventory_api.src.Infrastructure.Data;
 
-namespace API_Manajemen_Barang.src.Infrastructure.Data
+namespace Inventory_api.src.Infrastructure.Data
 {
     public class UnitOfWork
     {

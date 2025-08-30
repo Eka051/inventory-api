@@ -1,4 +1,4 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
+﻿using Inventory_api.src.Core.Entities;
 using Inventory_api.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 

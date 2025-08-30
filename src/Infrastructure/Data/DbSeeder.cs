@@ -34,11 +34,11 @@ namespace Inventory_api.src.Infrastructure.Data
             if (!context.Categories.Any())
             {
                 context.Categories.AddRange(
-                    new Category { Name = "Elektronik", Description = "Barang elektronik" },
-                    new Category { Name = "Pakaian", Description = "Barang pakaian pria & wanita" },
-                    new Category { Name = "Makanan", Description = "Berbagai jenis makanan" },
-                    new Category { Name = "Minuman", Description = "Berbagai jenis minuman" },
-                    new Category { Name = "Peralatan Rumah Tangga", Description = "Barang-barang untuk rumah" }
+                    new Category { Name = "Elektronik" },
+                    new Category { Name = "Pakaian" },
+                    new Category { Name = "Makanan" },
+                    new Category { Name = "Minuman" },
+                    new Category { Name = "Peralatan Rumah Tangga" }
                 );
 
                 context.SaveChanges();

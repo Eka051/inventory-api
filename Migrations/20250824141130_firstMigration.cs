@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace API_Manajemen_Barang.Migrations
+namespace Inventory_api.Migrations
 {
     /// <inheritdoc />
     public partial class firstMigration : Migration

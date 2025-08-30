@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace API_Manajemen_Barang.Migrations
+namespace Inventory_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250824141130_firstMigration")]

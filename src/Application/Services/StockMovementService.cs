@@ -1,12 +1,9 @@
-﻿using API_Manajemen_Barang.src.Application.Exceptions;
-using API_Manajemen_Barang.src.Application.Interfaces;
-using API_Manajemen_Barang.src.Core.Entities;
-using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
+﻿using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Application.Exceptions;
 using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data.Repositories;
 
-namespace API_Manajemen_Barang.src.Application.Services
+namespace Inventory_api.src.Application.Services
 {
     public class StockMovementService : IStockMovementService
     {
@@ -21,7 +18,7 @@ namespace API_Manajemen_Barang.src.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateaStockMovementAsync(StockMovementCreateDto createDto)
+        public async Task<StockMovement> CreateaStockMovementAsync(StockMovementCreateDto createDto)
         {
             var inventory = await _inventoryRepository.GetByItemIdAndWarehouseIdAsync(createDto.ItemId, createDto.WarehouseId);
 
@@ -36,7 +33,7 @@ namespace API_Manajemen_Barang.src.Application.Services
                     inventory.Quantity += createDto.Quantity;
                     break;
                 case "out":
-                    if (inventory.Quantity <  0)
+                    if (inventory.Quantity <  createDto.Quantity)
                     {
                         throw new BadRequestException("Stok item tidak mencukupi");
                     }
@@ -57,8 +54,10 @@ namespace API_Manajemen_Barang.src.Application.Services
             };
 
             await _stockMovementRepository.AddAsync(stockMovement);
+            _inventoryRepository.UpdateAsync(inventory);
             await _unitOfWork.SaveChangesAsync();
 
+            return stockMovement;
         }
         public async Task<IEnumerable<StockMovementResponseDto>> GetAllAsync()
         {

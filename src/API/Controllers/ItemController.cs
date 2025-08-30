@@ -1,10 +1,7 @@
-﻿using API_Manajemen_Barang.src.Application.Services;
+﻿using Inventory_api.src.Application.Services;
 using Inventory_api.src.Application.DTOs;
-using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Inventory_api.src.API.Controllers
 {
@@ -31,6 +28,7 @@ namespace Inventory_api.src.API.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         [Authorize]
         [ProducesResponseType(typeof(ItemResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -94,7 +92,7 @@ namespace Inventory_api.src.API.Controllers
         public async Task<IActionResult> DeleteItem(int id)
         {
             await _itemService.DeleteItemAsync(id);
-            return Ok(new { success = true, message = $"Item with ID {id} successfully updated" });
+            return Ok(new { success = true, message = $"Item with ID {id} successfully deleted" });
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using API_Manajemen_Barang.src.Core.Entities;
-using API_Manajemen_Barang.src.Core.Entities.Enum;
+﻿using Inventory_api.src.Core.Entities.Enum;
 
 namespace Inventory_api.src.Core.Entities
 {
@@ -7,12 +6,12 @@ namespace Inventory_api.src.Core.Entities
     {
         public int StockMovementId { get; set; }
         public int ItemId { get; set; }
-        public Item Item { get; set; }
+        public required Item Item { get; set; }
         public int WarehouseId { get; set; }
-        public virtual Warehouse Warehouse { get; set; }
+        public virtual required Warehouse Warehouse { get; set; }
         public StockMovementType Type { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public required User User { get; set; }
         public int Quantity { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -1,6 +1,5 @@
-﻿using Inventory_api.src.Application.DTOs;
-using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data;
+﻿using Inventory_api.src.Application.Services;
+using Inventory_api.src.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +9,10 @@ namespace Inventory_api.src.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public CategoryController(AppDbContext context)
+        private readonly CategoryService _categoryService;
+        public CategoryController(CategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -21,138 +20,57 @@ namespace Inventory_api.src.API.Controllers
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetAllCategories()
+        public async Task<IActionResult> GetAllCategories()
         {
-            var categories = _context.Categories.ToList();
-            var response = categories.Select(c => new CategoryResponseDto
-            {
-                CategoryId = c.CategoryId,
-                Name = c.Name,
-                Description = c.Description
-            }).ToList();
-            if (response == null || !response.Any())
-            {
-                return NotFound(new { success = false, message = "Data kategori tidak ditemukan" });
-            }
-            return Ok(new { success = true, data = response});
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            return Ok(new { success = true, data = categories });
         }
 
-        [HttpPost]
+        [HttpGet("{categoryId:int}")]
+        [Authorize]
+        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCategoryById(int categoryId)
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(categoryId);
+            return Ok(new { success = true, data = category });
+        }
+
+        [HttpGet]
         [Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult CreateCategory([FromBody] CategoryCreateDto categoryDto)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateDto categoryDto)
         {
-            try
-            {
-                if (categoryDto == null)
-                {
-                    return BadRequest(new { success = false, message = "Data kategori tidak valid" });
-                }
-
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                                  .Select(e => e.ErrorMessage)
-                                                  .ToList();
-                    return BadRequest(new { success = false, message = "Data kategori tidak valid", errors });
-                }
-
-                var existingCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name!.ToLower());
-                if (existingCategory != null)
-                {
-                    return Conflict(new { success = false, message = $"Kategori {existingCategory.Name} sudah ada. Tambahkan kategori lain" });
-                }
-
-                var category = new Category
-                {
-                    Name = categoryDto.Name!,
-                    Description = categoryDto.Description!
-                };
-
-                var response = new
-                {
-                    category.Name,
-                    category.Description
-                };
-                _context.Categories.Add(category);
-                _context.SaveChanges();
-                return CreatedAtAction(nameof(GetAllCategories), new { success = true, message = "Kategori berhasil ditambahkan", data = response });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, message = "Terjadi kesalahan pada server", error = ex.Message });
-            }
+            var createdCategory = await _categoryService.CreateCategoryAsync(categoryDto);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.CategoryId }, new { success = true, data = createdCategory });
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult UpdateCategory(int id, [FromBody] CategoryCreateDto categoryDto)
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryCreateDto categoryDto)
         {
-            if (categoryDto == null)
-            {
-                return BadRequest(new { success = false, message = "Data kategori tidak valid" });
-            }
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage)
-                                              .ToList();
-                return BadRequest(new { success = false, message = "Data kategori tidak valid", errors });
-            }
-            var existingCategory = _context.Categories.Find(id);
-            if (existingCategory == null)
-            {
-                return NotFound(new { success = false, message = "Kategori tidak ditemukan" });
-            }
-            else if (categoryDto.Name!.ToLower() != existingCategory.Name.ToLower())
-            {
-                var duplicateCategory = _context.Categories.FirstOrDefault(c => c.Name.ToLower() == categoryDto.Name.ToLower());
-                if (duplicateCategory != null)
-                {
-                    return Conflict(new { success = false, message = $"Kategori {duplicateCategory.Name} sudah ada. Tambahkan kategori lain" });
-                }
-            }
-            existingCategory.Name = categoryDto.Name;
-            existingCategory.Description = categoryDto.Description!;
-            var response = new CategoryResponseDto
-            {
-                CategoryId = existingCategory.CategoryId,
-                Name = existingCategory.Name,
-                Description = existingCategory.Description
-            };
-            _context.SaveChanges();
-            return Ok(new { success = true, message = "Kategori berhasil diperbarui", data = response });
+            await _categoryService.UpdateCategoryAsync(id, categoryDto);
+            return Ok(new {success = true, data = categoryDto, message = $"Category with ID {id} successfully updated"});
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            if (id <= 0)
-            {
-                return BadRequest(new { success = false, message = "ID kategori tidak valid" });
-            }
-            var existingCategory = _context.Categories.Find(id);
-            if (existingCategory == null)
-            {
-                return NotFound(new { success = false, message = $"Kategori dengan id {id} tidak ditemukan" });
-            }
-            _context.Categories.Remove(existingCategory);
-            _context.SaveChanges();
-            return Ok(new { success = true, message = $"Kategori {existingCategory.Name} dengan id {id} berhasil dihapus" });
+            await _categoryService.DeleteCategoryAsync(id);
+            return Ok(new { success = true, message = $"Category with ID {id} successfully deleted" });
         }
     }
 }

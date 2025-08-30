@@ -1,11 +1,11 @@
-﻿using API_Manajemen_Barang.src.Application.Exceptions;
-using API_Manajemen_Barang.src.Core.Entities;
-using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
+﻿using Inventory_api.src.Application.Exceptions;
+using Inventory_api.src.Core.Entities;
+using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
 
-namespace API_Manajemen_Barang.src.Application.Services
+namespace Inventory_api.src.Application.Services
 {
     public class ItemService : IItemService
     {

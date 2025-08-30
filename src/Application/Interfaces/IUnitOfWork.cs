@@ -1,4 +1,4 @@
-﻿namespace API_Manajemen_Barang.src.Application.Interfaces
+﻿namespace Inventory_api.src.Application.Interfaces
 {
     public interface IUnitOfWork
     {

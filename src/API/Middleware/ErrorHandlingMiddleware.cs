@@ -1,4 +1,4 @@
-﻿using API_Manajemen_Barang.src.Application.Exceptions;
+﻿using Inventory_api.src.Application.Exceptions;
 using System.Net;
 using System.Text.Json;
 

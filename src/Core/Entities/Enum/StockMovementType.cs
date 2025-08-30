@@ -1,4 +1,4 @@
-﻿namespace API_Manajemen_Barang.src.Core.Entities.Enum
+﻿namespace Inventory_api.src.Core.Entities.Enum
 {
     public enum StockMovementType
     {

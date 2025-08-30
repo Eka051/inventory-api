@@ -1,4 +1,4 @@
-﻿using API_Manajemen_Barang.src.Core.Entities.Enum;
+﻿using Inventory_api.src.Core.Entities.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace Inventory_api.src.Application.DTOs

@@ -1,4 +1,4 @@
-﻿namespace API_Manajemen_Barang.src.Application.Exceptions
+﻿namespace Inventory_api.src.Application.Exceptions
 {
     public class ConflictException : Exception
     {

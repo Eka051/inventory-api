@@ -1,4 +1,4 @@
-﻿namespace API_Manajemen_Barang.src.Core.Entities
+﻿namespace Inventory_api.src.Core.Entities
 {
     public class Location
     {
@@ -12,6 +12,6 @@
         public District? district { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public ICollection<Warehouse> Warehouse { get; set; }
+        public ICollection<Warehouse>? Warehouse { get; set; }
     }
 }
