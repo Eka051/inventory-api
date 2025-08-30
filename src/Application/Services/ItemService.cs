@@ -5,7 +5,7 @@ using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
 
-namespace API_Manajemen_Barang.src.Application.Interfaces
+namespace API_Manajemen_Barang.src.Application.Services
 {
     public class ItemService : IItemService
     {
@@ -71,6 +71,11 @@ namespace API_Manajemen_Barang.src.Application.Interfaces
 
         public async Task<ItemResponseDto> CreateNewItemAsync(ItemCreateDto itemDto)
         {
+            if (itemDto == null)
+            {
+                throw new ArgumentException("Item name can't be empty");
+            }
+
             if (await _itemRepository.IsItemNameExistAsync(itemDto.Name))
             {
                 throw new ConflictException($"Item with name {itemDto.Name} already exists");
@@ -83,7 +88,7 @@ namespace API_Manajemen_Barang.src.Application.Interfaces
                 CategoryId = itemDto.CategoryId,
             };
 
-            var initialInventory = new Inventory
+            var initialInventory = new Inventory                           
             {
                 WarehouseId = itemDto.WarehouseId,
                 Quantity = itemDto.Stock,

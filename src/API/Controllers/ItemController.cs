@@ -1,4 +1,4 @@
-﻿using API_Manajemen_Barang.src.Application.Interfaces;
+﻿using API_Manajemen_Barang.src.Application.Services;
 using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Core.Entities;
 using Inventory_api.src.Infrastructure.Data;

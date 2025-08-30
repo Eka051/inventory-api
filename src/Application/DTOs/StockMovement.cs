@@ -6,6 +6,7 @@ namespace Inventory_api.src.Application.DTOs
     public class StockMovementCreateDto
     {
         public int ItemId { get; set; }
+        public int WarehouseId { get; set; }
         public int Quantity { get; set; }
         public StockMovementType MovementType { get; set; } 
         public string? Note { get; set; }

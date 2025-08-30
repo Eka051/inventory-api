@@ -1,4 +1,7 @@
-﻿using Inventory_api.src.API.Middleware;
+﻿using API_Manajemen_Barang.src.Application.Interfaces;
+using API_Manajemen_Barang.src.Application.Services;
+using API_Manajemen_Barang.src.Infrastructure.Data.Repositories;
+using Inventory_api.src.API.Middleware;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.Services;
 using Inventory_api.src.Infrastructure.Data;
@@ -18,9 +21,19 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// Dependency Injection 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IStockMovementService, StockMovementService>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+
+
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

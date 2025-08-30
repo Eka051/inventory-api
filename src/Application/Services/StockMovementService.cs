@@ -10,49 +10,75 @@ namespace API_Manajemen_Barang.src.Application.Services
 {
     public class StockMovementService : IStockMovementService
     {
-        private readonly StockMovementRepository _stockMovementRepository;
-        private readonly ItemRepository _itemRepository;
-        private readonly Warehouse _warehouse;
+        private readonly IStockMovementRepository _stockMovementRepository;
+        private readonly IInventoryRepository _inventoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public StockMovementService(StockMovementRepository stokRepository, ItemRepository itemRepository, Warehouse warehouse)
+        public StockMovementService(IStockMovementRepository stockMovement, IInventoryRepository inventory, IUnitOfWork unitOfWork)
         {
-            _stockMovementRepository = stokRepository;
-            _itemRepository = itemRepository;
-            _warehouse = warehouse;
-        }
-        public async Task<IEnumerable<StockMovementResponseDto>> GetAllAsync()
-        {
-            var stockMovement = await _stockMovementRepository.GetAllStock();
-            if (stockMovement == null)
-            {
-                throw new NotFoundException("Stock Not Found");
-            }
-            var stockMovementDto = stockMovement.Select(st => new StockMovementResponseDto 
-            { 
-                StockMovementId = st.StockMovementId,
-                ItemId = st.ItemId,
-                Quantity = st.Quantity,
-            });
-            return stockMovementDto;
+            _stockMovementRepository = stockMovement;
+            _inventoryRepository = inventory;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task CreateaStockMovementAsync(StockMovementCreateDto createDto)
         {
-            var stockMovement = new StockMovementCreateDto
+            var inventory = await _inventoryRepository.GetByItemIdAndWarehouseIdAsync(createDto.ItemId, createDto.WarehouseId);
+
+            if (inventory == null)
+            {
+                throw new NotFoundException($"Tidak ada catatan inventaris untuk ItemId {createDto.ItemId} di WarehouseId {createDto.WarehouseId}.");
+            }
+
+            switch (createDto.MovementType.ToString().ToLower())
+            {
+                case "in":
+                    inventory.Quantity += createDto.Quantity;
+                    break;
+                case "out":
+                    if (inventory.Quantity <  0)
+                    {
+                        throw new BadRequestException("Stok item tidak mencukupi");
+                    }
+                    inventory.Quantity -= createDto.Quantity;
+                    break;
+                default:
+                    throw new BadRequestException("Tipe pergerakan invalid. Gunakan 'in' atau 'out'.");
+            }
+
+            var stockMovement = new StockMovement
             {
                 ItemId = createDto.ItemId,
-                MovementType = createDto.MovementType,
+                WarehouseId = createDto.WarehouseId,
                 Quantity = createDto.Quantity,
+                Type = createDto.MovementType,
+                Note = createDto.Note,
+                CreatedAt = DateTime.UtcNow,
             };
 
-            var item = new Item
+            await _stockMovementRepository.AddAsync(stockMovement);
+            await _unitOfWork.SaveChangesAsync();
+
+        }
+        public async Task<IEnumerable<StockMovementResponseDto>> GetAllAsync()
+        {
+            var stockMovement = await _stockMovementRepository.GetAllAsync();
+            
+            if (!stockMovement.Any())
             {
-                Stock = createDto.Quantity,
-            };
+                return new List<StockMovementResponseDto>();
+            }
 
-            await _itemRepository.AddAsync(item);
-            //_stockMovementRepository.AddStock(stockMovement);
+            var response = stockMovement.Select(sm => new StockMovementResponseDto
+            {
+                StockMovementId = sm.StockMovementId,
+                ItemId = sm.ItemId,
+                Quantity = sm.Quantity,
+                MovementType = sm.Type,
+                CreatedAt = sm.CreatedAt,
+            });
 
+            return response;
         }
     }
 }
