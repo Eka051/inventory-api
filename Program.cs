@@ -1,13 +1,14 @@
-﻿using Inventory_api.src.Application.Interfaces;
+﻿using Inventory_api.src.API.Middleware;
+using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.Services;
-using Inventory_api.src.Infrastructure.Data.Repositories;
-using Inventory_api.src.API.Middleware;
 using Inventory_api.src.Infrastructure.Data;
+using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -21,11 +22,14 @@ builder.Services.AddOpenApi();
 
 // Dependency Injection 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 builder.Services.AddScoped<IStockMovementService, StockMovementService>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
@@ -34,7 +38,10 @@ var connectionString = configuration.GetConnectionString("DefaultConnection")
     ?? Environment.GetEnvironmentVariable("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+    }));
 
 builder.Services.AddSwaggerGen(
     option =>
@@ -69,10 +76,6 @@ builder.Services.AddSwaggerGen(
                 new string[] { }
             }
         });
-
-        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-        option.IncludeXmlComments(xmlPath);
     }
 );
 

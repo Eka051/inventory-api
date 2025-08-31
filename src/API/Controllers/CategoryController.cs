@@ -1,5 +1,6 @@
 ﻿using Inventory_api.src.Application.Services;
 using Inventory_api.src.Application.DTOs;
+using Inventory_api.src.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +10,8 @@ namespace Inventory_api.src.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly CategoryService _categoryService;
-        public CategoryController(CategoryService categoryService)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
@@ -37,7 +38,7 @@ namespace Inventory_api.src.API.Controllers
             return Ok(new { success = true, data = category });
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,7 +48,7 @@ namespace Inventory_api.src.API.Controllers
         public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateDto categoryDto)
         {
             var createdCategory = await _categoryService.CreateCategoryAsync(categoryDto);
-            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.CategoryId }, new { success = true, data = createdCategory });
+            return CreatedAtAction(nameof(GetCategoryById), new { categoryId = createdCategory.CategoryId }, new { success = true, data = createdCategory });
         }
 
         [HttpPut("{id:int}")]

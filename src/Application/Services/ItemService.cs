@@ -9,9 +9,9 @@ namespace Inventory_api.src.Application.Services
     public class ItemService : IItemService
     {
         private readonly IItemRepository _itemRepository;
-        private readonly CategoryRepository _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
         
-        public ItemService(IItemRepository itemRepository, CategoryRepository categoryRepository)
+        public ItemService(IItemRepository itemRepository, ICategoryRepository categoryRepository)
         {
             _itemRepository = itemRepository;
             _categoryRepository = categoryRepository;

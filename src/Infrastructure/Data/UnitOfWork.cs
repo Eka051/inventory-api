@@ -1,19 +1,19 @@
-﻿using Inventory_api.src.Infrastructure.Data;
+﻿using Inventory_api.src.Application.Interfaces;
 
 namespace Inventory_api.src.Infrastructure.Data
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
-        public readonly AppDbContext _context;
+        private readonly AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<int> SaveChangesAsync()
+        public Task<int> SaveChangesAsync()
         {
-            return await _context.SaveChangesAsync();
+            return _context.SaveChangesAsync();
         }
     }
 }

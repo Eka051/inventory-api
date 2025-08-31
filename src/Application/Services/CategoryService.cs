@@ -29,7 +29,6 @@ namespace Inventory_api.src.Application.Services
                 throw new ConflictException($"Category with name {categoryCreateDto.Name} already exists");
             }
 
-
             var category = new Category
             {
                 Name = categoryCreateDto.Name,

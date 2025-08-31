@@ -1,0 +1,6 @@
+{
+  "TargetFramework": "net9.0",
+  "Migrations": {
+    "OutputDir": "src/Infrastructure/Data/Migrations"
+  }
+}

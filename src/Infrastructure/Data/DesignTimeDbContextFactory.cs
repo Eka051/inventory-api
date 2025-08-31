@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using System.Reflection;
 
 namespace Inventory_api.src.Infrastructure.Data
 {
@@ -14,7 +15,10 @@ namespace Inventory_api.src.Infrastructure.Data
 
             var builder = new DbContextOptionsBuilder<AppDbContext>();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            builder.UseNpgsql(connectionString);
+            builder.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+            });
 
             return new AppDbContext(builder.Options);
         }

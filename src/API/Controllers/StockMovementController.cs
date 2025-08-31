@@ -2,6 +2,7 @@
 using Inventory_api.src.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Inventory_api.src.Application.Interfaces;
 
 namespace Inventory_api.src.API.Controllers
 {
@@ -9,8 +10,8 @@ namespace Inventory_api.src.API.Controllers
     [ApiController]
     public class StockMovementController : ControllerBase
     {
-        private readonly StockMovementService _stockMovementService;
-        public StockMovementController(StockMovementService stockMovementService)
+        private readonly IStockMovementService _stockMovementService;
+        public StockMovementController(IStockMovementService stockMovementService)
         {
             _stockMovementService = stockMovementService;
         }
