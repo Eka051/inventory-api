@@ -11,7 +11,7 @@ namespace Inventory_api.src.Core.Entities
         public string Password { get; set; } = null!;
         public int RoleId { get; set; } 
         public Role Role { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
     }

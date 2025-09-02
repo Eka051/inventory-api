@@ -1,25 +1,33 @@
 ﻿using Inventory_api.src.Core.Entities;
+using Inventory_api.src.Core.Entities.Enum;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Inventory_api.src.Infrastructure.Data
 {
     public static class DbSeeder
     {
-        public static void Seed(AppDbContext context)
+        public static async Task SeedAsync(AppDbContext context)
         {
-            if (!context.Roles.Any())
+            await context.Database.MigrateAsync();
+
+            // Seed Roles
+            if (!await context.Roles.AnyAsync())
             {
-                context.Roles.AddRange(
+                await context.Roles.AddRangeAsync(
                     new Role { RoleName = "admin" },
                     new Role { RoleName = "staff" }
                 );
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
-            if (!context.Users.Any())
+            // Seed User
+            if (!await context.Users.AnyAsync())
             {
-                var adminRole = context.Roles.First(r => r.RoleName == "admin");
+                var adminRole = await context.Roles.FirstAsync(r => r.RoleName == "admin");
 
-                context.Users.Add(new User
+                await context.Users.AddAsync(new User
                 {
                     Username = "Admin",
                     Name = "Admin",
@@ -27,21 +35,20 @@ namespace Inventory_api.src.Infrastructure.Data
                     Password = BCrypt.Net.BCrypt.HashPassword("admin123"),
                     RoleId = adminRole.RoleId
                 });
-
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
-            if (!context.Categories.Any())
+            // Seed Categories
+            if (!await context.Categories.AnyAsync())
             {
-                context.Categories.AddRange(
+                await context.Categories.AddRangeAsync(
                     new Category { Name = "Elektronik" },
                     new Category { Name = "Pakaian" },
                     new Category { Name = "Makanan" },
                     new Category { Name = "Minuman" },
                     new Category { Name = "Peralatan Rumah Tangga" }
                 );
-
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

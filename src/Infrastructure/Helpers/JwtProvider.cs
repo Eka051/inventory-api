@@ -32,7 +32,7 @@ namespace Inventory_api.src.Infrastructure.Helpers
                 issuer: _configuration?["Jwt:Issuer"],
                 audience: _configuration!["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.UtcNow.AddMinutes(5),
                 signingCredentials: creds
             );
 
@@ -53,7 +53,7 @@ namespace Inventory_api.src.Infrastructure.Helpers
                 issuer: _configuration?["Jwt:Issuer"],
                 audience: _configuration!["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.UtcNow.AddMinutes(5),
                 signingCredentials: creds
             );
 

@@ -102,7 +102,7 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = services.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
-        DbSeeder.Seed(dbContext);
+        await DbSeeder.SeedAsync(dbContext);
     }
     catch (Exception ex)
     {
