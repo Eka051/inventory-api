@@ -15,7 +15,7 @@ namespace Inventory_api.src.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<string> LoginAsync(LoginDto dto)
+        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto dto)
         {
             var user = await _userRepository.GetUserByUsernameAsync(dto.Username!);
 
@@ -24,8 +24,14 @@ namespace Inventory_api.src.Application.Services
                 throw new UnauthorizedException("Username or password is wrong");
             }
 
-            var token = _jwtProvider.GenerateAccessToken(user);
-            return token;
+            var accessToken = _jwtProvider.GenerateAccessToken(user);
+            var refreshToken = _jwtProvider.GenerateRefreshToken(user);
+
+            return new LoginResponseDto
+            {
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+            };
         }
     }
 }

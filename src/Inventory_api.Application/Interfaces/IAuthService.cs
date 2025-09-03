@@ -3,6 +3,6 @@ namespace Inventory_api.src.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> LoginAsync(LoginDto dto);
+        Task<LoginResponseDto> LoginAsync(LoginRequestDto dto);
     }
 }
