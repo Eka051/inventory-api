@@ -14,7 +14,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     Args = args,
-    ContentRootPath = Path.Combine(Directory.GetCurrentDirectory(), "src", "API"),
+    ContentRootPath = Path.Combine(Directory.GetCurrentDirectory(), "src", "Inventory_api.WebAPI"),
 });
 
 builder.Services.AddControllers();
