@@ -1,12 +1,12 @@
-﻿using Inventory_api.src.Application.DTOs;
+﻿using Inventory_api.Infrastructure.Data;
+using Inventory_api.Infrastructure.Helpers;
+using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data;
-using Inventory_api.src.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory_api.src.API.Controllers
+namespace Inventory_api.WebAPI.Controllers
 {
     [Route("api/user")]
     [ApiController]

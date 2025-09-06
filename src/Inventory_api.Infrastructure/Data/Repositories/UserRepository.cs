@@ -1,8 +1,8 @@
-﻿using Inventory_api.src.Application.Interfaces;
-using Inventory_api.src.Core.Entities;
+﻿using Inventory_api.src.Core.Entities;
+using Inventory_api.src.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory_api.src.Infrastructure.Data.Repositories
+namespace Inventory_api.Infrastructure.Data.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -21,6 +21,5 @@ namespace Inventory_api.src.Infrastructure.Data.Repositories
         {
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Inventory_api.src.Application.Interfaces;
 
-namespace Inventory_api.src.Infrastructure.Data
+namespace Inventory_api.Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork
     {

@@ -1,8 +1,9 @@
-﻿using Inventory_api.src.Application.Interfaces;
+﻿using Inventory_api.Infrastructure.Data;
+using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory_api.src.Infrastructure.Data.Repositories
+namespace Inventory_api.Infrastructure.Data.Repositories
 {
     public class ItemRepository : IItemRepository
     {

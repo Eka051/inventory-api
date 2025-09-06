@@ -3,7 +3,7 @@ using Inventory_api.src.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inventory_api.src.API.Controllers
+namespace Inventory_api.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/items")]

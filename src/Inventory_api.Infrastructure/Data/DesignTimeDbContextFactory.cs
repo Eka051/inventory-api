@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
-namespace Inventory_api.src.Infrastructure.Data
+namespace Inventory_api.Infrastructure.Data
 {
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "src", "API"))
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Inventory_api.WebAPI"))
                 .AddJsonFile("appsettings.json")
                 .Build();
 

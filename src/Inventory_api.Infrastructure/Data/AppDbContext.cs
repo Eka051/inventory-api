@@ -1,7 +1,7 @@
 ﻿using Inventory_api.src.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory_api.src.Infrastructure.Data
+namespace Inventory_api.Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {

@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Inventory_api.src.Infrastructure.Data
+namespace Inventory_api.Infrastructure.Data
 {
     public static class DbSeeder
     {
         public static async Task SeedAsync(AppDbContext context)
         {
-            await context.Database.MigrateAsync();
+            await context.Database.EnsureCreatedAsync();
 
             // Seed Roles
             if (!await context.Roles.AnyAsync())

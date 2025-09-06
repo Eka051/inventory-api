@@ -1,8 +1,7 @@
 ﻿using Inventory_api.src.Application.Exceptions;
-using Inventory_api.src.Core.Entities;
-using Inventory_api.src.Infrastructure.Data.Repositories;
 using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Interfaces;
+using Inventory_api.src.Core.Entities;
 
 namespace Inventory_api.src.Application.Services
 {
@@ -20,7 +19,7 @@ namespace Inventory_api.src.Application.Services
         public async Task<ItemResponseDto> GetItemByIdAsync(int itemId)
         {
             var item = await _itemRepository.GetByIdAsync(itemId);
-            if (item == null)
+            if (item is null)
             {
                 throw new NotFoundException($"Item with ID {itemId} not found");
             }
@@ -53,10 +52,9 @@ namespace Inventory_api.src.Application.Services
 
         public async Task<IEnumerable<ItemResponseDto>> SearchItemsByNameAsync(string name)
         {
-            var item = await _itemRepository.FindByNameAsync(name);
-            var itemData = item.Select(item => new ItemResponseDto
+            var items = await _itemRepository.FindByNameAsync(name);
+            var itemData = items.Select(item => new ItemResponseDto
             {
-
                 ItemId = item.ItemId,
                 Name = item.Name,
                 Stock = item.Inventories?.Sum((inventory) => inventory.Quantity) ?? 0,
@@ -86,6 +84,7 @@ namespace Inventory_api.src.Application.Services
                 Name = itemDto.Name,
                 Description = itemDto.Description,
                 CategoryId = itemDto.CategoryId,
+                Inventories = new List<Inventory>()
             };
 
             
@@ -120,7 +119,7 @@ namespace Inventory_api.src.Application.Services
         public async Task UpdateItemAsync(int itemId, ItemCreateDto itemDto)
         {
             var item = await _itemRepository.GetByIdAsync(itemId);
-            if (item == null)
+            if (item is null)
             {
                 throw new NotFoundException($"Item with ID {itemId} not found");
             }
@@ -135,7 +134,7 @@ namespace Inventory_api.src.Application.Services
         public async Task DeleteItemAsync(int itemId)
         {
             var item = await _itemRepository.GetByIdAsync(itemId);
-            if (item == null)
+            if (item is null)
             {
                 throw new NotFoundException($"Item with ID {itemId} not found");
             }

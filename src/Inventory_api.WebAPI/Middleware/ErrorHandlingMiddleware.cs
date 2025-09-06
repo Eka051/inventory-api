@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace Inventory_api.src.API.Middleware
+namespace Inventory_api.WebAPI.Middleware
 {
     public class ErrorHandlingMiddleware
     {
@@ -58,7 +58,7 @@ namespace Inventory_api.src.API.Middleware
             }
 
             context.Response.StatusCode = (int)statusCode;
-            var result = JsonSerializer.Serialize(new {success = false, message = message});
+            var result = JsonSerializer.Serialize(new {success = false, message});
             return context.Response.WriteAsync(result);
         }
     }

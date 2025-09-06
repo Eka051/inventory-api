@@ -4,7 +4,7 @@ using Inventory_api.src.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inventory_api.src.API.Controllers
+namespace Inventory_api.WebAPI.Controllers
 {
     [Route("api/categories")]
     [ApiController]
@@ -17,7 +17,7 @@ namespace Inventory_api.src.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -1,11 +1,12 @@
-﻿using Inventory_api.src.Application.Interfaces;
+﻿using Microsoft.Extensions.Configuration;
+using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Core.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Inventory_api.src.Infrastructure.Helpers
+namespace Inventory_api.Infrastructure.Helpers
 {
     public class JwtProvider : IJwtProvider
     {

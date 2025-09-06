@@ -1,4 +1,4 @@
-﻿namespace Inventory_api.src.Infrastructure.Helpers
+﻿namespace Inventory_api.Infrastructure.Helpers
 {
     public class ApiResponse<T>
     {
