@@ -12,14 +12,34 @@ namespace Inventory_api.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<User?> GetUserByUsernameAsync(string username)
+        public async Task<User?> GetByUsernameAsync(string username)
         {
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public async Task<User?> GetUserByEmailAsync(string email)
+        public async Task<User?> GetByEmailAsync(string email)
         {
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _context.Users.Include(u => u.Role).ToListAsync();
+        }
+
+        public async Task AddAsync(User user)
+        {
+            await  _context.Users.AddAsync(user);
+        }
+
+        public void Update(User user)
+        {
+            _context.Users.Update(user);
+        }
+
+        public void Delete(User user)
+        {
+            _context.Users.Remove(user);
         }
     }
 }
