@@ -69,15 +69,13 @@ namespace Inventory_api.src.Application.Services
         {
             if (itemDto == null)
             {
-                throw new BadRequestException("Item name can't be empty");
+                throw new BadRequestException("Field can't be empty");
             }
 
             if (await _itemRepository.IsItemNameExistAsync(itemDto.Name))
             {
                 throw new ConflictException($"Item with name {itemDto.Name} already exists");
             }
-
-            
 
             var item = new Item
             {
@@ -86,8 +84,6 @@ namespace Inventory_api.src.Application.Services
                 CategoryId = itemDto.CategoryId,
                 Inventories = new List<Inventory>()
             };
-
-            
 
             var initialInventory = new Inventory
             {
@@ -98,12 +94,9 @@ namespace Inventory_api.src.Application.Services
 
             item.Inventories.Add(initialInventory);
 
-
             await _itemRepository.AddAsync(item);
             var category = await _categoryRepository.GetByIdAsync(item.CategoryId);
             var categoryName = category?.Name ?? string.Empty;
-
-
 
             return new ItemResponseDto
             {

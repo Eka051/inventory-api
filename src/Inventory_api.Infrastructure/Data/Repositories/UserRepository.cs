@@ -14,17 +14,33 @@ namespace Inventory_api.Infrastructure.Data.Repositories
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Username == username);
+            return await _context.Users
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public async Task<User?> GetByEmailAsync(string email)
+        public async Task<User?> GetByIdAsync(int id)
         {
-            return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.UserId == id);
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _context.Users.Include(u => u.Role).ToListAsync();
+            return await _context.Users
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .ToListAsync();
+        }
+
+        public async Task<bool> isExist(string name)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .AnyAsync(u => u.Name == name);
         }
 
         public async Task AddAsync(User user)

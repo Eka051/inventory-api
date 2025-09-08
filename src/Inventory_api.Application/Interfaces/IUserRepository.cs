@@ -5,7 +5,8 @@ namespace Inventory_api.src.Application.Interfaces
     public interface IUserRepository
     {
         Task<User?> GetByUsernameAsync(string username);
-        Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByIdAsync(int id);
+        Task<bool> isExist(string name);
         Task<IEnumerable<User>> GetAllAsync();
         Task AddAsync(User user);
         void Update(User user);
