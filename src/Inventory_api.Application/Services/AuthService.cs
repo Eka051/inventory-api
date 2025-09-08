@@ -17,7 +17,7 @@ namespace Inventory_api.src.Application.Services
 
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto dto)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(dto.Username!);
+            var user = await _userRepository.GetByUsernameAsync(dto.Username!);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
             {

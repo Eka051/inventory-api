@@ -2,7 +2,7 @@
 
 namespace Inventory_api.Application.Interfaces
 {
-    internal interface IUserService
+    public interface IUserService
     {
         Task<UserResponseDto> GetUserByUsername(string username);
         Task<IEnumerable<UserResponseDto>> GetAllUserAsync();
