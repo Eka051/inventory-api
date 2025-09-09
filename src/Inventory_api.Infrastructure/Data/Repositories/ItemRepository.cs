@@ -16,7 +16,9 @@ namespace Inventory_api.Infrastructure.Data.Repositories
 
         public async Task<Item?> GetByIdAsync(int itemId)
         {
-            return await _context.Items.Include(i => i.Category)
+            return await _context.Items
+                .AsNoTracking()
+                .Include(i => i.Category)
                 .Include(i => i.Inventories)
                 .FirstOrDefaultAsync(i => i.ItemId == itemId);
         }
