@@ -5,7 +5,7 @@ using Inventory_api.src.Application.Interfaces;
 
 namespace Inventory_api.Application.Services
 {
-    internal class UserService : IUserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
 

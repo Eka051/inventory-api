@@ -1,4 +1,5 @@
-﻿using Inventory_api.src.Application.DTOs;
+﻿using Inventory_api.Infrastructure.Helpers;
+using Inventory_api.src.Application.DTOs;
 using Inventory_api.src.Application.Exceptions;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.WebAPI;
@@ -25,23 +26,12 @@ namespace Inventory_api.WebAPI.Controllers
         /// </remarks>
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiErrorResponse),StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
         {
-            try
-            {
-                var token = await _authService.LoginAsync(dto);
-                return Ok(new { success = true, data = token });
-            }
-            catch (UnauthorizedException)
-            {
-                return Unauthorized(new { success = false, message = "Unauthorized, please authenticated / login" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { success = false, message = "An unexpected error occurred.", details = ex.Message });
-            }
+            var token = await _authService.LoginAsync(dto);
+            return Ok(new { success = true, data = token });
         }
     }
 }
