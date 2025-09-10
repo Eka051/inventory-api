@@ -39,5 +39,20 @@ namespace Inventory_api.Infrastructure.Data.Repositories
                 .Where(w => w.WarehouseName.ToLower() == name.ToLower())
                 .ToListAsync();
         }
+
+        public async Task AddAsync(Warehouse warehouse)
+        {
+            await _context.Warehouses.AddAsync(warehouse);
+        }
+
+        public void Update(Warehouse warehouse)
+        {
+            _context.Warehouses.Update(warehouse);
+        }
+
+        public void Delete(Warehouse warehouse)
+        {
+            _context.Warehouses.Remove(warehouse);
+        }
     }
 }

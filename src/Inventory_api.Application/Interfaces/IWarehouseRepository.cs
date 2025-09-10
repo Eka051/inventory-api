@@ -9,6 +9,6 @@ namespace Inventory_api.Application.Interfaces
         Task<IEnumerable<Warehouse>> GetByName(string name);
         Task AddAsync(Warehouse warehouse);
         void Update(Warehouse warehouse);
-        void Delete(int id);
+        void Delete(Warehouse warehouse);
     }
 }
