@@ -8,7 +8,7 @@ namespace Inventory_api.Application.Interfaces
         public Task<WarehouseResponseDto> GetWarehouseByIdAsync(int id);
         public Task<IEnumerable<WarehouseResponseDto>> GetWarehouseByNameAsync(string name);
         public Task AddWarehouseAsync(WarehouseCreateDto createDto);
-        public Task UpdateWarehouseAsync(WarehouseUpdateDto updateDto);
+        public Task UpdateWarehouseAsync(int warehouseId, WarehouseUpdateDto updateDto);
         public Task DeleteWarehouseAsync(int id);
 
     }
