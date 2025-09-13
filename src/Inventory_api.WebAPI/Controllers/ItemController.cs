@@ -2,6 +2,7 @@
 using Inventory_api.src.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Inventory_api.src.Application.Interfaces;
 
 namespace Inventory_api.WebAPI.Controllers
 {
@@ -9,7 +10,7 @@ namespace Inventory_api.WebAPI.Controllers
     [Route("api/items")]
     public class ItemController : ControllerBase
     {
-        private readonly ItemService _itemService;
+        private readonly IItemService _itemService;
 
         public ItemController(ItemService itemService)
         {
