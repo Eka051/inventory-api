@@ -22,7 +22,7 @@ namespace Inventory_api.WebAPI.Middleware
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"An error occured: {e.Message}");
+                _logger.LogError(e, $"An error occurred: {e.Message}");
                 await HandleExceptionAsync(context, e);
             }
         }
@@ -32,33 +32,39 @@ namespace Inventory_api.WebAPI.Middleware
             context.Response.ContentType = "application/json";
             HttpStatusCode statusCode;
             string message;
+            string error;
 
             switch (exception)
             {
-                case BadRequestException _:
+                case BadRequestException:
                     statusCode = HttpStatusCode.BadRequest;
                     message = exception.Message;
+                    error = "Bad Request";
                     break;
-                case UnauthorizedException _:
+                case UnauthorizedException:
                     statusCode = HttpStatusCode.Unauthorized;
                     message = exception.Message;
+                    error = "Unauthorized";
                     break;
-                case ConflictException _:
+                case ConflictException:
                     statusCode = HttpStatusCode.Conflict;
                     message = exception.Message;
+                    error = "Conflict";
                     break;
-                case NotFoundException _:
+                case NotFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     message = exception.Message;
+                    error = "Not Found";
                     break;
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     message = exception.Message;
+                    error = "Internal Server Error";
                     break;
             }
 
             context.Response.StatusCode = (int)statusCode;
-            var result = JsonSerializer.Serialize(new {success = false, message});
+            var result = JsonSerializer.Serialize(new { success = false, message, error });
             return context.Response.WriteAsync(result);
         }
     }

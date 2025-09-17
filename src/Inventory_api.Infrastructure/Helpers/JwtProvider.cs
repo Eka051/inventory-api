@@ -22,7 +22,8 @@ namespace Inventory_api.Infrastructure.Helpers
             var claims = new[]
             {
                     new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.RoleName),
+                    new Claim(ClaimTypes.Role, user.Role.RoleName.ToLower()), // Convert to lowercase for consistent role comparison
+                    new Claim("role", user.Role.RoleName.ToLower()), // Add a custom role claim for easier access
                     new Claim(ClaimTypes.Name, user.Name)
                 };
 
@@ -33,7 +34,7 @@ namespace Inventory_api.Infrastructure.Helpers
                 issuer: _configuration?["Jwt:Issuer"],
                 audience: _configuration!["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(5),
+                expires: DateTime.UtcNow.AddHours(1), // Extend to 1 hour for better usability
                 signingCredentials: creds
             );
 
@@ -54,12 +55,11 @@ namespace Inventory_api.Infrastructure.Helpers
                 issuer: _configuration?["Jwt:Issuer"],
                 audience: _configuration!["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(5),
+                expires: DateTime.UtcNow.AddDays(7), // Extend to 7 days
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory_api.Infrastructure.Data.Repositories
 {
-    internal class WarehouseRepository : IWarehouseRepository
+    public class WarehouseRepository : IWarehouseRepository
     {
         private readonly AppDbContext _context;
         public WarehouseRepository(AppDbContext context)
