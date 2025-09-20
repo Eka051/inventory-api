@@ -5,12 +5,16 @@ using Inventory_api.Infrastructure.Data.Repositories;
 using Inventory_api.Infrastructure.Helpers;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.Services;
+using Inventory_api.WebAPI.Configurations;
 using Inventory_api.WebAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +60,7 @@ builder.Services.AddSwaggerGen(
             Name = "Authorization",
             Type = SecuritySchemeType.Http,
             BearerFormat = "JWT",
-            Scheme = "Bearer"
+            Scheme = "bearer" // must be lowercase for Swagger UI
         });
 
         option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -79,6 +83,9 @@ builder.Services.AddSwaggerGen(
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false; // dev only
+        options.SaveToken = true;
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -88,9 +95,34 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"]
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.Name
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("Authentication failed.");
+                Console.WriteLine(context.Exception);
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                var errorDetail = context.AuthenticateFailure?.Message;
+                var result = JsonSerializer.Serialize(new { success = false, message = "Unauthorized. Please login & authenticated", details = errorDetail });
+                return context.Response.WriteAsync(result);
+            }
         };
     });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -123,6 +155,8 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
 app.MapControllers();
 

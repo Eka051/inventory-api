@@ -58,7 +58,7 @@ namespace Inventory_api.Infrastructure.Data
             // Warehouse -> Location (many Warehouse to one Location)
             modelBuilder.Entity<Warehouse>()
                 .HasOne(w => w.Location)
-                .WithMany() 
+                .WithMany(l => l.Warehouse) 
                 .HasForeignKey(w => w.LocationId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
