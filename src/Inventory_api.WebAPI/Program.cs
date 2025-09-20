@@ -10,18 +10,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
-using System.Text.Json;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    ContentRootPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Inventory_api.WebAPI"),
-});
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
 
 // Dependency Injection 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -44,10 +38,7 @@ var connectionString = configuration.GetConnectionString("DefaultConnection")
     ?? Environment.GetEnvironmentVariable("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString, npgsqlOptions =>
-    {
-        npgsqlOptions.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
-    }));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddSwaggerGen(
     option =>
@@ -99,36 +90,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"]
         };
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                context.NoResult();
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                context.Response.ContentType = "application/json";
-                var result = JsonSerializer.Serialize(new { success = false, message = "Authentication failed", error = context.Exception.Message });
-                return context.Response.WriteAsync(result);
-            },
-            OnChallenge = context =>
-            {
-                if (!context.Handled)
-                {
-                    context.HandleResponse();
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonSerializer.Serialize(new { success = false, message = "Unauthorized", error = context.ErrorDescription ?? "Token is missing or invalid" });
-                    return context.Response.WriteAsync(result);
-                }
-                return Task.CompletedTask;
-            },
-            OnForbidden = context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                context.Response.ContentType = "application/json";
-                var result = JsonSerializer.Serialize(new { success = false, message = "Forbidden", error = "You do not have permission to access this resource" });
-                return context.Response.WriteAsync(result);
-            }
-        };
     });
 
 var app = builder.Build();
@@ -148,11 +109,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || true)
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -160,18 +118,12 @@ if (app.Environment.IsDevelopment() || true)
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseAuthentication();
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-
-
-
-
-
-
-
-
