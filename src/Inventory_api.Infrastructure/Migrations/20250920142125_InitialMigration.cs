@@ -242,8 +242,7 @@ namespace Inventory_api.Infrastructure.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     LocationId = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LocationId1 = table.Column<int>(type: "integer", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -254,11 +253,6 @@ namespace Inventory_api.Infrastructure.Migrations
                         principalTable: "Locations",
                         principalColumn: "LocationId",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Warehouses_Locations_LocationId1",
-                        column: x => x.LocationId1,
-                        principalTable: "Locations",
-                        principalColumn: "LocationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -403,11 +397,6 @@ namespace Inventory_api.Infrastructure.Migrations
                 name: "IX_Warehouses_LocationId",
                 table: "Warehouses",
                 column: "LocationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Warehouses_LocationId1",
-                table: "Warehouses",
-                column: "LocationId1");
         }
 
         /// <inheritdoc />

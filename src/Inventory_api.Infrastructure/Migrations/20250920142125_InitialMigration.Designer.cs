@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory_api.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250906083631_InitialMigration")]
+    [Migration("20250920142125_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -416,9 +416,6 @@ namespace Inventory_api.Infrastructure.Migrations
                     b.Property<int>("LocationId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("LocationId1")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -429,8 +426,6 @@ namespace Inventory_api.Infrastructure.Migrations
                     b.HasKey("WarehouseId");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("LocationId1");
 
                     b.ToTable("Warehouses");
                 });
@@ -574,14 +569,10 @@ namespace Inventory_api.Infrastructure.Migrations
             modelBuilder.Entity("Inventory_api.src.Core.Entities.Warehouse", b =>
                 {
                     b.HasOne("Inventory_api.src.Core.Entities.Location", "Location")
-                        .WithMany()
+                        .WithMany("Warehouse")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Inventory_api.src.Core.Entities.Location", null)
-                        .WithMany("Warehouse")
-                        .HasForeignKey("LocationId1");
 
                     b.Navigation("Location");
                 });

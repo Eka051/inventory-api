@@ -5,11 +5,9 @@ using Inventory_api.Infrastructure.Data.Repositories;
 using Inventory_api.Infrastructure.Helpers;
 using Inventory_api.src.Application.Interfaces;
 using Inventory_api.src.Application.Services;
-using Inventory_api.WebAPI.Configurations;
 using Inventory_api.WebAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -60,7 +58,7 @@ builder.Services.AddSwaggerGen(
             Name = "Authorization",
             Type = SecuritySchemeType.Http,
             BearerFormat = "JWT",
-            Scheme = "bearer" // must be lowercase for Swagger UI
+            Scheme = "bearer" 
         });
 
         option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -131,13 +129,13 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<AppDbContext>();
-        dbContext.Database.Migrate();
+        await dbContext.Database.EnsureCreatedAsync();
         await DbSeeder.SeedAsync(dbContext);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
+        logger.LogError(ex, "An error occurred while initializing the database.");
     }
 }
 

@@ -110,5 +110,30 @@ namespace Inventory_api.Infrastructure.Data
                 .HasForeignKey(poi => poi.ItemId)
                 .IsRequired();
         }
+        
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+            foreach (var entityEntry in entries)
+            {
+                if (entityEntry.Properties.Any(p => p.Metadata.Name == "UpdatedAt"))
+                {
+                    entityEntry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+                }
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    if (entityEntry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
+                    {
+                        entityEntry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+                    }
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
     }
 }
