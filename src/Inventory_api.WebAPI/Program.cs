@@ -129,9 +129,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<AppDbContext>();
-        // Use EnsureCreated to avoid migration issues with identity column conversion
-        await dbContext.Database.EnsureDeletedAsync(); // Delete existing DB
-        await dbContext.Database.EnsureCreatedAsync();  // Recreate with new schema
+        await dbContext.Database.MigrateAsync();
         await DbSeeder.SeedAsync(dbContext);
     }
     catch (Exception ex)
