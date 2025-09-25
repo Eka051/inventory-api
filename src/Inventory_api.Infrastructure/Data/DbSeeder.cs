@@ -10,8 +10,6 @@ namespace Inventory_api.Infrastructure.Data
     {
         public static async Task SeedAsync(AppDbContext context)
         {
-            // Do not use EnsureCreated with Migrations. Schema should already be created by dbContext.Database.Migrate() in Program.cs
-
             // Seed Roles
             if (!await context.Roles.AnyAsync())
             {
@@ -29,6 +27,7 @@ namespace Inventory_api.Infrastructure.Data
 
                 await context.Users.AddAsync(new User
                 {
+                    UserId = Ulid.NewUlid(), // Generate new Ulid
                     Username = "Admin",
                     Name = "Admin",
                     Email = "admin@gmail.com",

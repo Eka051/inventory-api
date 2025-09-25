@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory_api.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class UpdateMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -77,8 +77,7 @@ namespace Inventory_api.Infrastructure.Migrations
                 name: "Items",
                 columns: table => new
                 {
-                    ItemId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ItemId = table.Column<string>(type: "char(26)", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CategoryId = table.Column<int>(type: "integer", nullable: false),
@@ -124,8 +123,7 @@ namespace Inventory_api.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "char(26)", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
@@ -152,7 +150,7 @@ namespace Inventory_api.Infrastructure.Migrations
                     PurchaseOrderItemId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PurchaseOrderId = table.Column<int>(type: "integer", nullable: false),
-                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<string>(type: "char(26)", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     PurchasePrice = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -259,7 +257,7 @@ namespace Inventory_api.Infrastructure.Migrations
                 name: "Inventories",
                 columns: table => new
                 {
-                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<string>(type: "char(26)", nullable: false),
                     WarehouseId = table.Column<int>(type: "integer", nullable: false),
                     InventoryId = table.Column<int>(type: "integer", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
@@ -290,10 +288,10 @@ namespace Inventory_api.Infrastructure.Migrations
                 {
                     StockMovementId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<string>(type: "char(26)", nullable: false),
                     WarehouseId = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "char(26)", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Note = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

@@ -58,7 +58,7 @@ builder.Services.AddSwaggerGen(
             Name = "Authorization",
             Type = SecuritySchemeType.Http,
             BearerFormat = "JWT",
-            Scheme = "bearer" 
+            Scheme = "bearer" // must be lowercase for Swagger UI
         });
 
         option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -129,7 +129,9 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<AppDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
+        // Use EnsureCreated to avoid migration issues with identity column conversion
+        await dbContext.Database.EnsureDeletedAsync(); // Delete existing DB
+        await dbContext.Database.EnsureCreatedAsync();  // Recreate with new schema
         await DbSeeder.SeedAsync(dbContext);
     }
     catch (Exception ex)

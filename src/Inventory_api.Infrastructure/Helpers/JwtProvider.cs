@@ -22,8 +22,8 @@ namespace Inventory_api.Infrastructure.Helpers
             var claims = new[]
             {
                     new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.RoleName.ToLower()), // Convert to lowercase for consistent role comparison
-                    new Claim("role", user.Role.RoleName.ToLower()), // Add a custom role claim for easier access
+                    new Claim(ClaimTypes.Role, user.Role.RoleName.ToLower()),
+                    new Claim("role", user.Role.RoleName.ToLower()), 
                     new Claim(ClaimTypes.Name, user.Name)
                 };
 

@@ -35,7 +35,7 @@ namespace Inventory_api.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetItemById(int Id)
+        public async Task<IActionResult> GetItemById(Ulid Id)
         {
             var item = await _itemService.GetItemByIdAsync(Id);
             return Ok(new {success = true, data=item});
@@ -77,7 +77,7 @@ namespace Inventory_api.WebAPI.Controllers
         [ProducesResponseType(typeof(ItemResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateItem(int id, [FromBody] ItemCreateDto itemDto)
+        public async Task<IActionResult> UpdateItem(Ulid id, [FromBody] ItemCreateDto itemDto)
         {
             await _itemService.UpdateItemAsync(id, itemDto);
             return Ok(new {success = true, data = itemDto, message = $"Item with ID {id} successfully updated" });
@@ -90,7 +90,7 @@ namespace Inventory_api.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteItem(int id)
+        public async Task<IActionResult> DeleteItem(Ulid id)
         {
             await _itemService.DeleteItemAsync(id);
             return Ok(new { success = true, message = $"Item with ID {id} successfully deleted" });

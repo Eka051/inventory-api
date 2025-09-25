@@ -1,11 +1,8 @@
-﻿
-using Inventory_api.src.Core.Entities;
-
-namespace Inventory_api.src.Core.Entities
+﻿namespace Inventory_api.src.Core.Entities
 {
     public class Item
     {
-        public int ItemId { get; set; }
+        public Ulid ItemId { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public int CategoryId { get; set; }

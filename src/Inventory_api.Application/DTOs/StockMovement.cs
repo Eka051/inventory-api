@@ -5,7 +5,7 @@ namespace Inventory_api.src.Application.DTOs
 {
     public class StockMovementCreateDto
     {
-        public int ItemId { get; set; }
+        public Ulid ItemId { get; set; }
         public int WarehouseId { get; set; }
         public int Quantity { get; set; }
         public StockMovementType MovementType { get; set; } 
@@ -15,7 +15,7 @@ namespace Inventory_api.src.Application.DTOs
     public class StockMovementResponseDto
     {
         public int StockMovementId { get; set; }
-        public int ItemId { get; set; }
+        public Ulid ItemId { get; set; }
         public int Quantity { get; set; }
         public StockMovementType MovementType { get; set; }
         public string? Note { get; set; }

@@ -4,7 +4,7 @@ namespace Inventory_api.src.Application.Interfaces
 {
     public interface IInventoryRepository
     {
-        Task<Inventory?> GetByItemIdAndWarehouseIdAsync(int itemId, int warehouseId);
+        Task<Inventory?> GetByItemIdAndWarehouseIdAsync(Ulid itemId, int warehouseId);
         Task AddAsync(Inventory inventory);
         void UpdateAsync(Inventory inventory);
     }

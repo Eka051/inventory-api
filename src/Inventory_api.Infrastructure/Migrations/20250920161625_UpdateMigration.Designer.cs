@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory_api.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250920142125_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250920161625_UpdateMigration")]
+    partial class UpdateMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,8 +106,8 @@ namespace Inventory_api.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory_api.src.Core.Entities.Inventory", b =>
                 {
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
+                    b.Property<string>("ItemId")
+                        .HasColumnType("char(26)");
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("integer");
@@ -136,11 +136,8 @@ namespace Inventory_api.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory_api.src.Core.Entities.Item", b =>
                 {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ItemId"));
+                    b.Property<string>("ItemId")
+                        .HasColumnType("char(26)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -266,8 +263,9 @@ namespace Inventory_api.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("char(26)");
 
                     b.Property<int>("PurchaseOrderId")
                         .HasColumnType("integer");
@@ -324,8 +322,9 @@ namespace Inventory_api.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer");
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("char(26)");
 
                     b.Property<string>("Note")
                         .HasColumnType("text");
@@ -339,8 +338,9 @@ namespace Inventory_api.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("char(26)");
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("integer");
@@ -358,11 +358,8 @@ namespace Inventory_api.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory_api.src.Core.Entities.User", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    b.Property<string>("UserId")
+                        .HasColumnType("char(26)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

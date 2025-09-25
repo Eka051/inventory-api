@@ -7,7 +7,7 @@ namespace Inventory_api.Application.Interfaces
         Task<UserResponseDto> GetUserByUsername(string username);
         Task<IEnumerable<UserResponseDto>> GetAllUserAsync();
         Task<UserResponseDto> CreateUserAsync(UserCreateDto userCreateDto);
-        Task UpdateUserAsync(int userId, UserCreateDto userCreateDto);
-        Task DeleteUserAsync(int userId);
+        Task UpdateUserAsync(Ulid userId, UserCreateDto userCreateDto);
+        Task DeleteUserAsync(Ulid userId);
     }
 }

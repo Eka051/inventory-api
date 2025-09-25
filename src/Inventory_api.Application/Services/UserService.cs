@@ -75,7 +75,7 @@ namespace Inventory_api.Application.Services
             };
         }
 
-        public async Task UpdateUserAsync(int userId, UserCreateDto userCreateDto)
+        public async Task UpdateUserAsync(Ulid userId, UserCreateDto userCreateDto)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
@@ -90,7 +90,7 @@ namespace Inventory_api.Application.Services
             _userRepository.Update(user);
         }
 
-        public async Task DeleteUserAsync(int userId)
+        public async Task DeleteUserAsync(Ulid userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)

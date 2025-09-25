@@ -123,7 +123,7 @@ namespace Inventory_api.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult UpdateStaff(int id, [FromBody] UserCreateDto userDto)
+        public IActionResult UpdateStaff(Ulid id, [FromBody] UserCreateDto userDto)
         {
             try
             {
@@ -181,7 +181,7 @@ namespace Inventory_api.WebAPI.Controllers
         [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult DeleteStaff(int id)
+        public IActionResult DeleteStaff(Ulid id)
         {
             try
             {

@@ -1,5 +1,7 @@
 ﻿using Inventory_api.src.Core.Entities;
+using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Inventory_api.Infrastructure.Data
 {
@@ -25,6 +27,43 @@ namespace Inventory_api.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Ulid <-> string converter
+            var ulidToString = new ValueConverter<Ulid, string>(
+                v => v.ToString(),
+                v => Ulid.Parse(v)
+            );
+
+            // Apply Ulid converter to all Ulid properties
+            modelBuilder.Entity<User>()
+                .Property(u => u.UserId)
+                .HasConversion(ulidToString)
+                .HasColumnType("char(26)");
+
+            modelBuilder.Entity<Item>()
+                .Property(i => i.ItemId)
+                .HasConversion(ulidToString)
+                .HasColumnType("char(26)");
+
+            modelBuilder.Entity<Inventory>()
+                .Property(inv => inv.ItemId)
+                .HasConversion(ulidToString)
+                .HasColumnType("char(26)");
+
+            modelBuilder.Entity<StockMovement>()
+                .Property(sm => sm.ItemId)
+                .HasConversion(ulidToString)
+                .HasColumnType("char(26)");
+
+            modelBuilder.Entity<StockMovement>()
+                .Property(sm => sm.UserId)
+                .HasConversion(ulidToString)
+                .HasColumnType("char(26)");
+
+            modelBuilder.Entity<PurchaseOrderItem>()
+                .Property(poi => poi.ItemId)
+                .HasConversion(ulidToString)
+                .HasColumnType("char(26)");
+
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
             // User -> Role (many User to one Role)

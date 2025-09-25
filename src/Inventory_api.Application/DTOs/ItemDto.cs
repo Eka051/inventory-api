@@ -4,7 +4,7 @@ namespace Inventory_api.src.Application.DTOs
 {
     public class ItemDto
     {
-        public int ItemId { get; set; }
+        public Ulid ItemId { get; set; }
         public required string Name { get; set; }
     }
 
@@ -19,7 +19,7 @@ namespace Inventory_api.src.Application.DTOs
 
     public class ItemResponseDto
     {
-        public int ItemId { get; set; }
+        public Ulid ItemId { get; set; }
         public required string Name { get; set; }
         public int Stock { get; set; }
         public string? Description { get; set; }

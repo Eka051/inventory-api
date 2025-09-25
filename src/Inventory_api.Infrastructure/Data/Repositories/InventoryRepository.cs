@@ -12,7 +12,7 @@ namespace Inventory_api.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<Inventory?> GetByItemIdAndWarehouseIdAsync(int itemId, int warehouseId)
+        public async Task<Inventory?> GetByItemIdAndWarehouseIdAsync(Ulid itemId, int warehouseId)
         {
             return await _context.Inventories.FirstOrDefaultAsync(inv => inv.ItemId == itemId && inv.WarehouseId == warehouseId);
         }

@@ -14,7 +14,7 @@ namespace Inventory_api.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<Item?> GetByIdAsync(int itemId)
+        public async Task<Item?> GetByIdAsync(Ulid itemId)
         {
             return await _context.Items
                 .AsNoTracking()

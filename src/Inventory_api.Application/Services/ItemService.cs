@@ -16,7 +16,7 @@ namespace Inventory_api.src.Application.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<ItemResponseDto> GetItemByIdAsync(int itemId)
+        public async Task<ItemResponseDto> GetItemByIdAsync(Ulid itemId)
         {
             var item = await _itemRepository.GetByIdAsync(itemId);
             if (item is null)
@@ -109,7 +109,7 @@ namespace Inventory_api.src.Application.Services
             };
         }
 
-        public async Task UpdateItemAsync(int itemId, ItemCreateDto itemDto)
+        public async Task UpdateItemAsync(Ulid itemId, ItemCreateDto itemDto)
         {
             var item = await _itemRepository.GetByIdAsync(itemId);
             if (item is null)
@@ -124,7 +124,7 @@ namespace Inventory_api.src.Application.Services
             _itemRepository.Update(item);
         }
 
-        public async Task DeleteItemAsync(int itemId)
+        public async Task DeleteItemAsync(Ulid itemId)
         {
             var item = await _itemRepository.GetByIdAsync(itemId);
             if (item is null)

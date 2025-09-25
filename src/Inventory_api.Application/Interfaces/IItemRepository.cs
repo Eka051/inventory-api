@@ -4,7 +4,7 @@ namespace Inventory_api.src.Application.Interfaces
 {
     public interface IItemRepository
     {
-        Task<Item?> GetByIdAsync(int itemId);
+        Task<Item?> GetByIdAsync(Ulid itemId);
         Task<IEnumerable<Item>> GetAllAsync();
         Task<IEnumerable<Item>> FindByNameAsync(string name);
         Task<bool> IsItemNameExistAsync(string name);

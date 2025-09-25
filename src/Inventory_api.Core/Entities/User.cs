@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Inventory_api.src.Core.Entities
+﻿namespace Inventory_api.src.Core.Entities
 {
     public class User
     {
-        public int UserId { get; set; }
+        public Ulid UserId { get; set; }
         public string Username { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
